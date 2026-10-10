@@ -132,7 +132,9 @@ nslookup -type=MX thinkersfoundation.net 1.1.1.1
 nslookup -type=TXT _dmarc.thinkersfoundation.net 1.1.1.1
 
 # DNSSEC (expect an RRSIG and the ad flag once the DS is at the registrar)
-nslookup -type=DS thinkersfoundation.net 1.1.1.1
+# Windows nslookup has no DS type ("unknown query type: DS"); use dig, or DNS-over-HTTPS:
+dig +dnssec DS thinkersfoundation.net @1.1.1.1
+curl -s -H "accept: application/dns-json" "https://cloudflare-dns.com/dns-query?name=thinkersfoundation.net&type=DS&do=1"
 ```
 
 A mail test is plan item 2.4 and is CireSnave's: from a different mailbox, send to `admin@` and to a made-up name at
@@ -146,8 +148,9 @@ A mail test is plan item 2.4 and is CireSnave's: from a different mailbox, send 
 - **Idempotency.** `dns` steps skip a record that already exists. `email-rules` does **not** skip existing rules; a
   second run creates duplicates. If a run stops half-way, delete the partial rules in the dashboard or read them back
   first.
-- **`.us` and `.foundation` DS records.** Whether each registry accepts a DS (DNSSEC-signed TLD) was not verified from a
-  primary source. Run `dig DS us.` and `dig DS foundation.` (or `nslookup -type=DS`) from any machine before step 5.
+- **`.us` and `.foundation` DS records.** Both TLDs are DNSSEC-signed (root DS present, AD=true, read 2026-10-10 via
+  DNS-over-HTTPS; `com.` as positive control), so a DS at the registry is possible. Whether each *registrar* offers a DS
+  field is still unconfirmed and is CireSnave's to see at step 1.3.
 - **Pages is not necessarily Cloudflare's long-term product.** Their docs steer new projects at Workers static assets
   in places. If the PM prefers that, `wrangler deploy` with `[assets]` replaces section 3 and the DNS and redirect
   steps are unchanged.
