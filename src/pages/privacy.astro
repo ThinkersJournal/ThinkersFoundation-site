@@ -1,0 +1,28 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { CONTACT_EMAIL } from '../consts';
+---
+<PageLayout
+  title="Privacy"
+  heading="We collect nothing."
+  intro="This site is a handful of static pages. It has no analytics, no cookies, no forms and no third-party scripts.">
+  <div class="prose">
+    <h2>What this site collects</h2>
+    <p>Nothing of its own. There are no analytics, no cookies, no tracking pixels and no embedded content from other sites. The fonts are served from this domain, so no font provider sees your visit. Our host, Cloudflare, keeps standard request logs for security and reliability, as any web host does; we do not use them to profile anyone.</p>
+    <h2>When you email us</h2>
+    <p>Mail sent to any address at <code>thinkersfoundation.net</code>, <code>thinkersfoundation.us</code> or <code>thinkers.foundation</code> is forwarded by Cloudflare&rsquo;s email routing to the founder&rsquo;s personal mailbox. We receive your address and whatever you write, and use it only to reply. We do not add you to a list or pass it to anyone.</p>
+    <h2>Third parties</h2>
+    <p>Cloudflare hosts this site and forwards its email. The founder&rsquo;s mail provider holds the mailbox the forwarded messages land in. That is the whole list.</p>
+    <h2>Your choices</h2>
+    <p>There is nothing on this site to export or delete. If you have emailed us and want that correspondence removed, ask at <a class="link" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+    <h2>Changes</h2>
+    <p>If this changes, it changes here. Last updated October 2026.</p>
+  </div>
+</PageLayout>
+<style>
+  .prose{max-width:66ch}
+  .prose h2{font-size:clamp(22px,3vw,28px);margin:36px 0 4px}
+  .prose h2:first-of-type{margin-top:8px}
+  .prose p{color:var(--muted);font-size:17px;margin:14px 0 0}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:.92em;color:var(--text)}
+</style>

@@ -1,0 +1,28 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { STATUS, BOARD } from '../consts';
+---
+<PageLayout
+  title="About"
+  heading="About Thinker's Foundation"
+  intro="Thinkers helping thinkers: a small organization being formed to look after open-source building blocks and the people who use them.">
+  <div class="prose">
+    <h2>Where things stand</h2>
+    <p>{STATUS} Nothing on this site describes a finished organization.</p>
+    <h2>What it is for</h2>
+    <p>The aim is a long-lived home for open-source building blocks, and for the people who make things with them, that does not depend on one person&rsquo;s laptop or goodwill. The projects it expects to support today are <a class="link" href="https://www.thinkersjournal.com">Thinker&rsquo;s Journal</a> and the open-source libraries and tools published at <a class="link" href="https://github.com/ThinkersJournal">github.com/ThinkersJournal</a>.</p>
+    <h2>Who is behind it</h2>
+    {BOARD.length === 0
+      ? <p>The founder, alone for now. Directors and officers will be listed on this page once each has agreed to be named.</p>
+      : <ul>{BOARD.map((b) => <li>{b.name}, {b.role}</li>)}</ul>}
+    <h2>How to reach it</h2>
+    <p>See the <a class="link" href="/contact">contact page</a>.</p>
+  </div>
+</PageLayout>
+<style>
+  .prose{max-width:66ch}
+  .prose h2{font-size:clamp(22px,3vw,28px);margin:36px 0 4px}
+  .prose h2:first-of-type{margin-top:8px}
+  .prose p,.prose li{color:var(--muted);font-size:17px;margin:14px 0 0}
+  .prose ul{list-style:none}
+</style>
