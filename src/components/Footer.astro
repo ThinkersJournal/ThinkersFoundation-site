@@ -1,0 +1,20 @@
+---
+import { STATUS, CONTACT_EMAIL } from '../consts';
+import Wordmark from './Wordmark.astro';
+---
+<footer class="ft">
+  <div class="wrap">
+    <Wordmark size="sm" />
+    <p class="status">{STATUS}</p>
+    <p class="links">
+      <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/privacy">Privacy</a> ·
+      <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+    </p>
+  </div>
+</footer>
+<style>
+  .ft{background:#040405;border-top:1px solid var(--line);padding:48px 0 40px}
+  .status,.links{color:var(--dim);font-size:14px;margin-top:12px;max-width:70ch}
+  .links a{color:var(--muted)}
+  .links a:hover{color:var(--text)}
+</style>

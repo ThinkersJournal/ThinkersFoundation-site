@@ -1,0 +1,15 @@
+# Cloudflare Pages security headers, applied to every route.
+#
+# The CSP ENFORCES (the sibling site ships report-only because it has inline island
+# scripts). This site has no scripts at all and astro.config.mjs emits every stylesheet
+# as a file, so 'self' is enough and nothing needs 'unsafe-inline'. tests/security.spec.ts
+# fails if the built HTML ever needs an inline script or style.
+#
+# No report-uri: there is no Function to receive reports and this site stores nothing.
+# HSTS is a zone setting (ops/cloudflare/plan.mjs, step hsts) and is the founder's call.
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=()
+  Content-Security-Policy: default-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; script-src 'self'; style-src 'self'; font-src 'self'; connect-src 'self'; form-action 'none'

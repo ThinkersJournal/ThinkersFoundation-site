@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { STATUS, PROJECTS, CONTACT_EMAIL } from '../consts';
+---
+<BaseLayout>
+  <section class="wrap hero">
+    <h1>Thinkers helping thinkers.</h1>
+    <p class="lede">Thinker&rsquo;s Foundation is being formed to support open-source building blocks and the people who make things with them.</p>
+    <p class="status" data-testid="status">{STATUS}</p>
+  </section>
+  <section class="wrap projects" aria-labelledby="projects-h">
+    <h2 id="projects-h">What it will support</h2>
+    <ul>
+      {PROJECTS.map((p) => (
+        <li>
+          <a class="name" href={p.href}>{p.name}</a>
+          <p>{p.desc}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+  <section class="wrap who" aria-labelledby="who-h">
+    <h2 id="who-h">Who is behind this</h2>
+    <p>One person, so far: the founder, who also runs Thinker&rsquo;s Journal. Directors and officers will be named here once each has agreed to be listed. Read <a class="link" href="/about">more about the project</a>, or write to <a class="link" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+  </section>
+</BaseLayout>
+<style>
+  .hero{padding:clamp(56px,9vw,120px) 0 clamp(32px,5vw,56px)}
+  h1{font-size:clamp(38px,6.4vw,68px);line-height:1.04;max-width:16ch}
+  .lede{color:var(--muted);font-size:clamp(18px,2.2vw,22px);margin-top:24px;max-width:56ch}
+  .status{margin-top:22px;color:var(--text);border-left:3px solid var(--green);padding:4px 0 4px 14px;max-width:60ch;font-size:16px}
+  .projects,.who{padding:clamp(24px,4vw,44px) 0}
+  h2{font-size:clamp(22px,3vw,28px)}
+  ul{list-style:none;margin-top:18px;display:grid;gap:22px;max-width:66ch}
+  .name{font-family:var(--serif);font-size:20px;color:var(--green)}
+  .name:hover{text-decoration:underline}
+  li p,.who p{color:var(--muted);font-size:17px;margin-top:6px;max-width:66ch}
+  .who p{margin-top:14px}
+</style>

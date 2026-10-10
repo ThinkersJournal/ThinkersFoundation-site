@@ -1,0 +1,18 @@
+---
+import BaseLayout from './BaseLayout.astro';
+interface Props { title: string; heading: string; intro?: string }
+const { title, heading, intro } = Astro.props;
+---
+<BaseLayout title={title} description={intro}>
+  <div class="band"><div class="wrap">
+    <h1>{heading}</h1>
+    {intro && <p class="intro">{intro}</p>}
+  </div></div>
+  <div class="wrap body"><slot /></div>
+</BaseLayout>
+<style>
+  .band{padding:clamp(48px,7vw,88px) 0 clamp(28px,4vw,40px);border-bottom:1px solid var(--line)}
+  h1{font-size:clamp(32px,5.2vw,52px);line-height:1.08}
+  .intro{color:var(--muted);font-size:clamp(16px,2vw,19px);margin-top:18px;max-width:60ch}
+  .body{padding:clamp(40px,6vw,72px) 0}
+</style>
