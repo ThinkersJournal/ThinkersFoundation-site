@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Astro / build output
+dist/
+.astro/
+
+# Cloudflare
+.wrangler/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Env & secrets. Nothing in this repo needs a secret; the API token lives in the vault
+# and reaches ops/cloudflare/ only through the environment.
+.env
+.env.*
+!.env.example
+*.token
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+supertool
+
+# The PM's planning document: holds the founder's personal mailbox and CireSnave quotes, and this
+# repo is meant to go public. It lives in the working directory, not in the repo.
+/PRE-FILING-PLAN.md
