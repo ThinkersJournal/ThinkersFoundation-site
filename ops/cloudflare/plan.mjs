@@ -205,7 +205,7 @@ const STEPS = [
   },
   {
     id: 'pages-domains',
-    plan: '1.6 attach the three apex hostnames to the Pages project (the project must exist: RUNBOOK.md step P1)',
+    plan: '1.6 attach the three apex hostnames to the Pages project (the project must exist: RUNBOOK.md section 3, dashboard Git integration)',
     async run() {
       await call('GET', `/accounts/${ACCOUNT}/pages/projects/${PROJECT}`);
       for (const z of ZONES) {
