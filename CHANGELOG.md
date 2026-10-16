@@ -3,6 +3,19 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.9 - 2026-10-22
+
+CI only (number provisional until the PM confirms at the gate); no change to the site or to `ops/`. DRAFT: do not merge until a runner is registered, or every job queues forever.
+
+- `.github/workflows/ci.yml` is split into `ci-pr.yml` (pull_request only; every job `if: head.repo.full_name == github.repository`)
+  and `ci-main.yml` (push to main, workflow_dispatch; no `if`). All eight jobs `runs-on: [self-hosted, windows]` (hosted jobs die
+  on billing for this private repo). Job names are unchanged, so the required checks keep their names. Duplicated, not a reusable
+  workflow: the lint rejects `workflow_call`.
+- Playwright job: the Linux-only browser cache and `--with-deps` steps are replaced by `npx playwright install chromium`.
+- Not measured: nothing has run on `gh-runner`. Unknown until it does: Playwright browser install under that account, Node via
+  `setup-node`, `npm ci` and `astro build` on Windows, and the freshness spec's git fixtures on Windows.
+- `runner-lint --private` (agentlife origin/main, v0.16.8): 0 findings on both files; the earlier single-file `||` form and a PR job with no `if` each give 4 findings.
+
 ## 0.1.8 - 2026-10-21
 
 Ops tooling and docs. CireSnave ruled Workers (board 234: "234: Workers"). Number is provisional until the PM confirms at the gate.
@@ -20,7 +33,6 @@ Docs plus one printed string in `ops/cloudflare/plan.mjs` (the `pages-domains` p
 - `ops/cloudflare/RUNBOOK.md` section 3: Pages option P2 (Git integration) is decided (board 226, CireSnave); P1 removed. Adds the
   dashboard field table (project name must be exactly `thinkersfoundation-site`) and a predicted read-back checklist for steps 6 to 8,
   including the A/AAAA-versus-CNAME trap in `dns-pages`. Nothing in it has run.
-- Draft PR #7 (self-hosted runner CI) will renumber to 0.1.6 when it rebases.
 
 ## 0.1.4 - 2026-10-16
 
