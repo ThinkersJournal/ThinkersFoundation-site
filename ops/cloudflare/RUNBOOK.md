@@ -86,36 +86,66 @@ steps did not run):
 | 3 | `--apply --only email-rules` | 2.3 | refuses to run until the destination is verified |
 | 4 | `--apply --only dmarc` | 2.5 | see "SPF" below |
 | 5 | `--apply --only dnssec` | 1.3 | **only once every zone reads Active** (DNSSEC order above, step 4); the script prints the DS record; CireSnave enters it at each registrar |
-| 6 | Pages project, below (P1 or P2) | 1.6 | P2 needs a dashboard click-through |
+| 6 | Pages project, section 3 (P2 chosen) | 1.6 | CireSnave's dashboard click-through |
 | 7 | `--apply --only dns-pages,pages-domains` | 1.6 | none |
 | 8 | `--apply --only redirects` | 1.7 | none |
 | 9 | optional: `--apply --only hsts` | n/a | the founder's call, after steps 1 to 8 are verified |
 
 ## 3. The Pages project (plan 1.6)
 
-Two ways. **This is a decision for CireSnave, not for the lane**, because Direct Upload cannot be switched to Git
-integration later (Cloudflare Pages docs, as read second-hand on 2026-10-10).
+**Decided 2026-10-16 (board 226): P2, Git integration.** CireSnave chose it; the PM relayed the ruling. P1 (Direct Upload via
+`wrangler pages project create`) is not used, and Direct Upload cannot be switched to Git integration later (Cloudflare Pages
+docs, as read second-hand on 2026-10-10), so do not create the project any other way first.
 
-**P1. Direct Upload (fully scriptable, no dashboard).** Deploys are manual or from a CI job that holds the token.
-Nothing in this repo's CI deploys today.
+**The dashboard click-through (CireSnave):** Workers & Pages, Create, Pages, Connect to Git, authorize the Cloudflare GitHub
+app on the `ThinkersJournal` org (an org owner must approve the install; the repo is private, so grant the app access to
+`ThinkersFoundation-site`), choose `ThinkersFoundation-site`, then:
 
-```
-npx wrangler pages project create thinkersfoundation-site --production-branch main     # REAL
-npm ci && npm run build
-npx wrangler pages deploy dist --project-name thinkersfoundation-site --branch main    # REAL
-```
+| Field | Value |
+|---|---|
+| Project name | **`thinkersfoundation-site` exactly**: `plan.mjs` addresses the project by that name (`PROJECT`), and a different name makes `pages-domains` fail at its first GET |
+| Production branch | `main` |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Node version | from `.nvmrc` (Pages reads it; if the dashboard shows a `NODE_VERSION` field, leave it empty) |
 
-**P2. Git integration (what plan 1.6 describes).** The GitHub link is made in the dashboard: Workers & Pages, Create,
-Pages, Connect to Git, authorize the Cloudflare GitHub app on the `ThinkersJournal` org (an org owner must approve the
-install), choose `ThinkersFoundation-site`. Build command `npm run build`, output directory `dist`, production branch
-`main`, Node version from `.nvmrc`. After that, a merge to `main` deploys, as with ThinkersJournal.com. Everything
-below the project creation is the same either way.
+After that, a merge to `main` deploys, as with ThinkersJournal.com. The API cannot create a Git-integrated project without
+that interactive authorization (not confirmed from the docs; assumed). Steps 7 and 8 below are the same either way.
 
-I could not confirm from the docs that the API can create a Git-integrated project without that interactive
-authorization (the dashboard flow requires it). Assume it cannot.
+### Read-back checklist for steps 6 to 8
 
-**Recommend P2**: it matches the sibling site and keeps the token out of CI. The cost is one 5-minute click-through and an
-org-owner approval.
+Predictions first, so a wrong shape is visible. Nothing here has run. Steps 7 and 8 are run by CireSnave in his shell, as
+every `--apply` is; the lane reads what he pastes.
+
+**Step 6, after the click-through (no token):**
+
+- [ ] The first build is green in the dashboard (Deployments). Paste its last lines. A failure here is a build problem, not a DNS one.
+- [ ] `curl -sI https://thinkersfoundation-site.pages.dev/` -> `HTTP/2 200` and a `content-security-policy` header with `script-src 'self'`.
+  This proves the project and the build before any domain is attached.
+- [ ] Project name in the dashboard reads `thinkersfoundation-site` (the table above).
+
+**Step 7, `--apply --only dns-pages,pages-domains` (runs `zones` first):**
+
+- [ ] `dns-pages`: for each of the 6 names (apex and `www` in 3 zones) a `GET .../dns_records?type=CNAME&name=...` -> `HTTP 200`, then
+  either `POST ... -> HTTP 200, success=true` or `exists: CNAME <name> -> <content> (left alone)`.
+  **Trap:** `ensureDns` looks only for a record of the *same type*. If a zone scan imported an `A`/`AAAA` at an apex or `www`, the
+  `POST` of the CNAME is refused (a CNAME cannot share a name with another record), the run stops at `dns-pages`, and
+  `pages-domains` did not run. Fix by reading the zone's records in the dashboard and deleting the stale one by hand; do not
+  loosen the script.
+- [ ] A rerun that finds `exists: CNAME ... -> <something other than thinkersfoundation-site.pages.dev>` is a finding: the script
+  leaves it alone and says so.
+- [ ] `pages-domains`: `GET .../pages/projects/thinkersfoundation-site` -> `HTTP 200`, three `POST .../domains` -> `HTTP 200`, then three
+  lines `<zone>: status=...`. A status other than active right after the POST (certificate validation still pending) is
+  expected and is not a failure; re-read the domain list later. **Not measured:** the exact status strings and whether a
+  second `POST` of an attached domain errors. Do not rerun `pages-domains` to "check"; read the project's domains in the dashboard.
+- [ ] After DNS settles, `curl -sI https://thinkersfoundation.net/` -> `HTTP/2 200` (section 5).
+
+**Step 8, `--apply --only redirects`:**
+
+- [ ] Per zone: `PUT .../rulesets/phases/http_request_dynamic_redirect/entrypoint -> HTTP 200, success=true`, then a `GET` -> `HTTP 200`.
+  The rule JSON is untested against the live API (section 6), so a 4xx on the first `PUT` is a script finding, not a user error.
+- [ ] Run the section 5 `for h in ...` loop: five lines each `HTTP/2 301` with `location: https://thinkersfoundation.net/about`.
+- [ ] `curl -sI "https://thinkersfoundation.us/about?x=1"` -> `location: https://thinkersfoundation.net/about?x=1` (query preserved).
 
 ## 4. SPF: do not add a second record
 

@@ -3,6 +3,15 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.5 - 2026-10-16
+
+Docs plus one printed string in `ops/cloudflare/plan.mjs` (the `pages-domains` plan line); no behaviour change.
+
+- `ops/cloudflare/RUNBOOK.md` section 3: Pages option P2 (Git integration) is decided (board 226, CireSnave); P1 removed. Adds the
+  dashboard field table (project name must be exactly `thinkersfoundation-site`) and a predicted read-back checklist for steps 6 to 8,
+  including the A/AAAA-versus-CNAME trap in `dns-pages`. Nothing in it has run.
+- Draft PR #7 (self-hosted runner CI) will renumber to 0.1.6 when it rebases.
+
 ## 0.1.4 - 2026-10-16
 
 `ops/cloudflare/plan.mjs`: `email-rules` now asserts the catch-all after its PUT.
