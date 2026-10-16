@@ -43,6 +43,23 @@ run is the test. If a step returns an authorization error, widen only that one p
 
 ## 2. Order
 
+### DNSSEC order (human steps at each registrar, before and after the script)
+
+DNSSEC must be **off** at the registrar when the nameservers change and **on** again only after Cloudflare serves the
+zone. Do these in order, per domain. Source: <https://developers.cloudflare.com/dns/dnssec/> ("Last updated Jun 24,
+2026"), read 2026-10-16.
+
+0. Check whether a DS record already exists: `dig DS <domain> @1.1.1.1` (not `nslookup`, which cannot query DS). A fresh
+   domain usually has none (general knowledge, unverified here); if none, skip step 1.
+1. If a DS exists: remove it at the registrar and wait at least its TTL (read it from the `dig` answer; Cloudflare says
+   "commonly 24–48 hours for most TLDs"). Changing nameservers first makes validating resolvers return SERVFAIL.
+2. Set the registrar's nameservers to the two Cloudflare ones (plan 1.2); wait for the old NS TTL ("typically one hour
+   or less").
+3. Wait until the zone reads **Active** (`--apply --only zones` below proves it).
+4. Only then: `--apply --only dnssec` (table row 5) and add the DS record it prints at the registrar (plan 1.3). Domains
+   at Cloudflare Registrar: the DS is automatic (CDS/CDNSKEY scanning, one to two days).
+5. Verify with the `dig +dnssec` commands in section 5.
+
 ```
 export CLOUDFLARE_ACCOUNT_ID=...          # from the dashboard
 export CLOUDFLARE_API_TOKEN=...           # from the vault, never typed into history
@@ -61,7 +78,7 @@ steps did not run):
 | 2 | `--apply --only email-enable` | 2.1 | none |
 | 3 | `--apply --only email-rules` | 2.3 | refuses to run until the destination is verified |
 | 4 | `--apply --only dmarc` | 2.5 | see "SPF" below |
-| 5 | `--apply --only dnssec` | 1.3 | the script prints the DS record; CireSnave enters it at each registrar |
+| 5 | `--apply --only dnssec` | 1.3 | **only once every zone reads Active** (DNSSEC order above, step 4); the script prints the DS record; CireSnave enters it at each registrar |
 | 6 | Pages project, below (P1 or P2) | 1.6 | P2 needs a dashboard click-through |
 | 7 | `--apply --only dns-pages,pages-domains` | 1.6 | none |
 | 8 | `--apply --only redirects` | 1.7 | none |
@@ -151,6 +168,11 @@ A mail test is plan item 2.4 and is CireSnave's: from a different mailbox, send 
 - **`.us` and `.foundation` DS records.** Both TLDs are DNSSEC-signed (root DS present, AD=true, read 2026-10-10 via
   DNS-over-HTTPS; `com.` as positive control), so a DS at the registry is possible. Whether each *registrar* offers a DS
   field is still unconfirmed and is CireSnave's to see at step 1.3.
+- **DNSSEC order.** The sequence in section 2 is Cloudflare's own migration procedure for a provider that cannot add
+  DNSKEY records, read from its docs page 2026-10-16. Not read: Cloudflare's DNSSEC-states page. `plan.mjs --apply` always
+  prepends the `zones` step, which stops the run when any zone is not `active`, so `--only dnssec` makes no PATCH on a
+  pending zone. This is pinned by `tests/plan-dnssec.spec.ts` (a mock stands in for the API; with the check removed,
+  four of its five tests fail). An earlier draft of this note said the opposite; it was wrong.
 - **Pages is not necessarily Cloudflare's long-term product.** Their docs steer new projects at Workers static assets
   in places. If the PM prefers that, `wrangler deploy` with `[assets]` replaces section 3 and the DNS and redirect
   steps are unchanged.
