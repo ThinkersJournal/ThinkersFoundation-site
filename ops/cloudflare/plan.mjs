@@ -162,7 +162,18 @@ const STEPS = [
         });
         const r = await call('GET', `/zones/${zoneId[z]}/email/routing/rules`);
         if (apply) console.log(`    ${z}: ${r.result.length} named rule(s): ${r.result.map((x) => x.matchers[0].value).join(', ')}`);
-        await call('GET', `/zones/${zoneId[z]}/email/routing/rules/catch_all`);
+        // The named-rule listing above does not include the catch-all, so read it back on its own
+        // and assert it: a 2xx PUT that left it disabled is how a made-up name bounces.
+        const c = await call('GET', `/zones/${zoneId[z]}/email/routing/rules/catch_all`);
+        if (apply) {
+          const fwd = c.result?.actions?.[0]?.value ?? [];
+          const ok = c.result?.enabled === true
+            && c.result?.matchers?.[0]?.type === 'all'
+            && c.result?.actions?.[0]?.type === 'forward'
+            && fwd.some((v) => String(v).toLowerCase() === FORWARD_TO.toLowerCase());
+          console.log(`    ${z}: catch-all enabled=${c.result?.enabled} matcher=${c.result?.matchers?.[0]?.type} action=${c.result?.actions?.[0]?.type}`);
+          if (!ok) throw new Error(`catch-all for ${z} is not enabled and forwarding to FORWARD_TO after the PUT`);
+        }
       }
     },
   },

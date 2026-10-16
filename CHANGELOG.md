@@ -3,6 +3,16 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.4 - 2026-10-16
+
+`ops/cloudflare/plan.mjs`: `email-rules` now asserts the catch-all after its PUT.
+
+- The named-rule listing does not include the catch-all, and the old read-back printed its GET without checking it, so a catch-all
+  that never took effect passed silently (a made-up address at one domain bounced, 2026-10-16). The step now fails unless the
+  catch-all is enabled, matches all, and forwards to `FORWARD_TO`, per zone.
+- `tests/plan-catchall.spec.ts` plus a stateful email mock: a zone whose PUT is skipped must fail the run (control: all stored passes).
+- Do not rerun `email-rules --apply` to check: it duplicates named rules. Read the catch-all in the dashboard or GET it.
+
 ## 0.1.3 - 2026-10-16
 
 Docs only; no change to `ops/cloudflare/plan.mjs`.
