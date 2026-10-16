@@ -3,6 +3,15 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.3 - 2026-10-16
+
+Docs only; no change to `ops/cloudflare/plan.mjs`.
+
+- `ops/cloudflare/RUNBOOK.md`, `docs/CLOUDFLARE-PLAN.md` row 1.5: the token is vault entry
+  `CLOUDFLARE_THINKERSFOUNDATION_API_TOKEN` with `--env CLOUDFLARE_API_TOKEN`; real commands run through
+  `with-secret`, one secret per command; never a generic `CLOUDFLARE_API_TOKEN` entry.
+- `docs/CLOUDFLARE-PLAN.md`: header carries the copy date (2026-10-16).
+
 ## 0.1.2 - 2026-10-16
 
 Docs and one test; no change to `ops/cloudflare/plan.mjs`.
