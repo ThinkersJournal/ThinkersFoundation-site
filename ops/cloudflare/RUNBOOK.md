@@ -169,8 +169,10 @@ A mail test is plan item 2.4 and is CireSnave's: from a different mailbox, send 
   DNS-over-HTTPS; `com.` as positive control), so a DS at the registry is possible. Whether each *registrar* offers a DS
   field is still unconfirmed and is CireSnave's to see at step 1.3.
 - **DNSSEC order.** The sequence in section 2 is Cloudflare's own migration procedure for a provider that cannot add
-  DNSKEY records, read from its docs page 2026-10-16. Not read: Cloudflare's DNSSEC-states page. `plan.mjs` does not
-  itself refuse `--only dnssec` on a zone that is not Active; that check is the human's.
+  DNSKEY records, read from its docs page 2026-10-16. Not read: Cloudflare's DNSSEC-states page. `plan.mjs --apply` always
+  prepends the `zones` step, which stops the run when any zone is not `active`, so `--only dnssec` makes no PATCH on a
+  pending zone. This is pinned by `tests/plan-dnssec.spec.ts` (a mock stands in for the API; with the check removed,
+  four of its five tests fail). An earlier draft of this note said the opposite; it was wrong.
 - **Pages is not necessarily Cloudflare's long-term product.** Their docs steer new projects at Workers static assets
   in places. If the PM prefers that, `wrangler deploy` with `[assets]` replaces section 3 and the DNS and redirect
   steps are unchanged.

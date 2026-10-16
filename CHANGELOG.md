@@ -3,13 +3,16 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
-## Unreleased
+## 0.1.2 - 2026-10-16
 
-Docs only; the version is allocated at gate.
+Docs and one test; no change to `ops/cloudflare/plan.mjs`.
 
 - `ops/cloudflare/RUNBOOK.md`: the DNSSEC order of operations (check for an existing DS, remove it and wait its TTL,
   change nameservers, wait for Active, then enable DNSSEC in Cloudflare and add the DS), replacing the unordered
   "enable DNSSEC at the registrar" wording. Source: Cloudflare's DNSSEC docs page.
+- `docs/CLOUDFLARE-PLAN.md`: a tracked copy of section 1 of the private pre-filing plan, with the same ordered rows.
+- `tests/plan-dnssec.spec.ts`: pins that `plan.mjs --apply --only dnssec` refuses a zone that is not Active and makes
+  no DNSSEC PATCH (runs `plan.mjs` unmodified against a stand-in for the API, `tests/helpers/`).
 - `docs/VERIFY-FINDINGS.md` row 7: points at that order.
 
 ## 0.1.1 - 2026-10-11
