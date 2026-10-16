@@ -11,7 +11,7 @@ prints every call and sends none.
 | Need | Who | Where it goes |
 |---|---|---|
 | Zones added, nameservers set (plan 1.1, 1.2) | CireSnave | dashboard and registrars. Not scriptable from here: the registrar logins are his |
-| API token (plan 1.5) with the permissions in section 1 | CireSnave | the vault; reaches the shell only as `CLOUDFLARE_API_TOKEN` |
+| API token (plan 1.5) with the permissions in section 1 | CireSnave | the vault, entry `CLOUDFLARE_THINKERSFOUNDATION_API_TOKEN`, created with `--env CLOUDFLARE_API_TOKEN` (the name `plan.mjs` and wrangler read). Never a generic `CLOUDFLARE_API_TOKEN` entry: other projects have their own per-purpose entries |
 | Account id | CireSnave or the dashboard | `CLOUDFLARE_ACCOUNT_ID` (not secret) |
 | Forwarding mailbox | CireSnave | `FORWARD_TO`. Kept out of the repo on purpose; this repo is meant to go public |
 
@@ -62,12 +62,19 @@ zone. Do these in order, per domain. Source: <https://developers.cloudflare.com/
 
 ```
 export CLOUDFLARE_ACCOUNT_ID=...          # from the dashboard
-export CLOUDFLARE_API_TOKEN=...           # from the vault, never typed into history
 export FORWARD_TO=...                     # the destination mailbox
 
-node ops/cloudflare/plan.mjs                      # PLAN: read what it will do. No network.
-node ops/cloudflare/plan.mjs --apply --only zones # REAL, read-only: proves the token sees 3 active zones
+node ops/cloudflare/plan.mjs                      # PLAN: read what it will do. No network, no token.
+
+# REAL commands: the token comes from the vault, one secret per command, never exported or typed.
+# Every `--apply` below is wrapped the same way:
+with-secret CLOUDFLARE_THINKERSFOUNDATION_API_TOKEN --reason "plan.mjs zones" -- \
+  node ops/cloudflare/plan.mjs --apply --only zones   # read-only: proves the token sees 3 active zones
 ```
+
+The vault entry is set once by CireSnave: `with-secret vault set CLOUDFLARE_THINKERSFOUNDATION_API_TOKEN --env
+CLOUDFLARE_API_TOKEN --access read`, scoped to the three zones and this account only (section 1). The entry name is
+per purpose; `--env` is what the process sees.
 
 Then, step by step, reading each read-back before the next (the script stops on the first failure and says that later
 steps did not run):
