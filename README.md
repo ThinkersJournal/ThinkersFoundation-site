@@ -37,6 +37,10 @@ npm test          # freshness guard, then Playwright + axe against the built sit
 Four required checks, one job each, named as in ThinkersJournal.com so branch protection can require them by name:
 `Tree-freshness guard`, `Type check (astro check)`, `Build (astro build)`, `Playwright + axe`.
 
+The jobs run on the self-hosted Windows runner, because hosted Actions on a private repo fail on the account's billing.
+They run on push to `main`, manual dispatch, and pull requests from this repo only (never a fork). See the header of
+`.github/workflows/ci-pr.yml` (pull requests) and `ci-main.yml` (push, dispatch); keep their jobs identical.
+
 ## Operations
 
 `ops/cloudflare/` holds the Cloudflare side of the plan: `RUNBOOK.md` and `plan.mjs`. **Nothing there has been

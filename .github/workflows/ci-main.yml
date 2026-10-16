@@ -16,13 +16,20 @@ name: CI
 # step would be green on every PR whatever the guard's code said. What CI can check is
 # that the guard still makes the right decision, and its own spec does that.
 #
+# RUNNER (push and dispatch). Hosted Actions on this private repo die in 2 s on an account billing
+# failure, so every job runs on the self-hosted Windows runner (EXPECTATIONS 5.1h, "Private
+# repos"; agentlife docs/RUNNER-SETUP.md 2b/8a). This file is push-to-main and
+# workflow_dispatch ONLY, with no `if:`; pull requests live in ci-pr.yml with the same jobs. Keep the two files' jobs identical apart from that line.
+# A private repo takes no fork PRs and its fork-workflow setting stays off; the `if:` keeps
+# it that way if that ever changes. No environment gate (Free plan). No secrets.
+# Not measured: nothing here has run on `gh-runner` yet (no runner is registered).
+#
 # Cloudflare Pages deploys on its own. A deploy status is not a gate, so nothing here
 # deploys and none of these jobs depend on it.
 
 on:
   push:
     branches: [main]
-  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -35,7 +42,7 @@ concurrency:
 jobs:
   freshness:
     name: Tree-freshness guard
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, windows]
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -58,7 +65,7 @@ jobs:
 
   check:
     name: Type check (astro check)
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, windows]
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -78,7 +85,7 @@ jobs:
 
   build:
     name: Build (astro build)
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, windows]
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -98,7 +105,7 @@ jobs:
 
   test:
     name: Playwright + axe
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, windows]
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -113,23 +120,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Keyed on the lockfile, which pins @playwright/test exactly, so a version bump
-      # busts the cache. On a hit only the OS libraries are installed, since they are
-      # not in the cached directory.
-      - name: Cache Playwright browsers
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        id: playwright-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Chromium and its OS dependencies
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-
-      - name: Install Chromium's OS dependencies (browser cached)
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
+      # Chromium lands in the runner account's Playwright cache and is reused across jobs;
+      # the install is a no-op when the pinned version is already there. No --with-deps:
+      # that flag installs Linux OS packages and this runner is Windows.
+      - name: Install Chromium
+        run: npx playwright install chromium
 
       # `npx playwright test`, not `npm test`: the pretest hook runs the freshness guard,
       # which is "NOT VERIFIED" on a detached CI checkout (see the header). Job 1 covers
