@@ -194,7 +194,8 @@ const STEPS = [
   },
   {
     id: 'dns-pages',
-    plan: '1.6 proxied CNAMEs (apex and www) to the Pages project, in each zone',
+    optIn: true, // Pages projects only: a Workers project gets its DNS from Custom Domains (RUNBOOK 3W)
+    plan: 'PAGES ONLY, run with --only. 1.6 proxied CNAMEs (apex and www) to the Pages project, in each zone',
     async run() {
       for (const z of ZONES) {
         for (const name of [z, `www.${z}`]) {
@@ -205,7 +206,8 @@ const STEPS = [
   },
   {
     id: 'pages-domains',
-    plan: '1.6 attach the three apex hostnames to the Pages project (the project must exist: RUNBOOK.md section 3, dashboard Git integration)',
+    optIn: true, // Pages projects only: the /pages/projects API does not see a Workers project
+    plan: 'PAGES ONLY, run with --only. 1.6 attach the three apex hostnames to the Pages project (the project must exist: RUNBOOK.md section 3, dashboard Git integration)',
     async run() {
       await call('GET', `/accounts/${ACCOUNT}/pages/projects/${PROJECT}`);
       for (const z of ZONES) {

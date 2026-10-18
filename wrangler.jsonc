@@ -1,0 +1,31 @@
+// DRAFT, Workers-variant only (RUNBOOK.md section 3W). Not used by Cloudflare Pages, which ignores it
+// unless the project is a Workers project; do not merge before CireSnave says the project is Workers
+// (CIRESNAVE-DECISIONS item 234). Nothing here has been deployed or run.
+//
+// A static site with no Worker script: Wrangler uploads ./dist as static assets.
+// Source: developers.cloudflare.com/workers/static-assets (read 2026-10-18); the page's example
+// sets compatibility_date to "today's date" and shows assets.directory + not_found_handling.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "thinkersfoundation-site",
+  "compatibility_date": "2026-10-18",
+  "assets": {
+    "directory": "./dist",
+    // dist/404.html exists (src/pages/404.astro): serve it with a 404 status.
+    "not_found_handling": "404-page"
+  },
+  // Custom Domains: Cloudflare creates the DNS records and certificates itself, so the Pages-only
+  // plan.mjs steps dns-pages and pages-domains are NOT run for a Workers project. The docs say an
+  // existing CNAME on a hostname blocks this; the six names below already have proxied records
+  // (read 2026-10-17 over DoH), so delete those placeholders in the dashboard first (RUNBOOK 3W).
+  // The non-canonical names are listed too: the redirect rules (plan.mjs, step redirects) only
+  // fire for hostnames that reach Cloudflare's proxy, and a Custom Domain makes that so.
+  "routes": [
+    { "pattern": "thinkersfoundation.net", "custom_domain": true },
+    { "pattern": "www.thinkersfoundation.net", "custom_domain": true },
+    { "pattern": "thinkersfoundation.us", "custom_domain": true },
+    { "pattern": "www.thinkersfoundation.us", "custom_domain": true },
+    { "pattern": "thinkers.foundation", "custom_domain": true },
+    { "pattern": "www.thinkers.foundation", "custom_domain": true }
+  ]
+}

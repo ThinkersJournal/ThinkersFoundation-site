@@ -3,6 +3,15 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.7 - 2026-10-18
+
+DRAFT, do not merge before CireSnave answers Pages-or-Workers (his board 234). Number is provisional (0.1.6 is draft PR #7).
+
+- `wrangler.jsonc` (new): Workers static-assets config for `./dist` plus Custom Domains for the six hostnames. Unrun.
+- `ops/cloudflare/plan.mjs`: `dns-pages` and `pages-domains` are now opt-in (`--only`), so a bare `--apply` does not run Pages-only steps against a
+  Workers project. `tests/plan-steps.spec.ts` pins it (with the opt-in removed the default plan lists both steps, so the test fails).
+- `ops/cloudflare/RUNBOOK.md` section 3W: the Workers variant and what is not known.
+
 ## 0.1.5 - 2026-10-16
 
 Docs plus one printed string in `ops/cloudflare/plan.mjs` (the `pages-domains` plan line); no behaviour change.

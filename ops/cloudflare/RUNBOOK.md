@@ -87,7 +87,7 @@ steps did not run):
 | 4 | `--apply --only dmarc` | 2.5 | see "SPF" below |
 | 5 | `--apply --only dnssec` | 1.3 | **only once every zone reads Active** (DNSSEC order above, step 4); the script prints the DS record; CireSnave enters it at each registrar |
 | 6 | Pages project, section 3 (P2 chosen) | 1.6 | CireSnave's dashboard click-through |
-| 7 | `--apply --only dns-pages,pages-domains` | 1.6 | none |
+| 7 | `--apply --only dns-pages,pages-domains` (Pages only; a Workers project skips this, section 3W) | 1.6 | none |
 | 8 | `--apply --only redirects` | 1.7 | none |
 | 9 | optional: `--apply --only hsts` | n/a | the founder's call, after steps 1 to 8 are verified |
 
@@ -146,6 +146,33 @@ every `--apply` is; the lane reads what he pastes.
   The rule JSON is untested against the live API (section 6), so a 4xx on the first `PUT` is a script finding, not a user error.
 - [ ] Run the section 5 `for h in ...` loop: five lines each `HTTP/2 301` with `location: https://thinkersfoundation.net/about`.
 - [ ] `curl -sI "https://thinkersfoundation.us/about?x=1"` -> `location: https://thinkersfoundation.net/about?x=1` (query preserved).
+
+### 3W. If the project turns out to be a Workers project (DRAFT, not decided)
+
+Why this exists: on PR #7 the check "Workers Builds: thinkersfoundation-site" failed, and its link points at
+`dash.cloudflare.com/.../workers/services/view/thinkersfoundation-site/...`, which is the Workers product, not Pages. Section 3
+and the `dns-pages`/`pages-domains` steps assume Pages. **CireSnave's answer is pending (his board item 234):** which product the
+project is, and the build log. Until then this section is a draft and nothing in it has run.
+
+| | Pages (section 3) | Workers static assets (this section) |
+|---|---|---|
+| Config | dashboard fields | `wrangler.jsonc` at the repo root (`assets.directory` `./dist`) |
+| Domains and DNS | `plan.mjs --only dns-pages,pages-domains` | `routes` with `custom_domain: true` in `wrangler.jsonc`; Cloudflare creates the DNS records and certificates when `wrangler deploy` runs |
+| Redirects, mail, DMARC, DNSSEC | unchanged | unchanged (`plan.mjs --only redirects` etc.) |
+
+What the docs say (read 2026-10-18, developers.cloudflare.com/workers/static-assets and `.../routing/custom-domains`): a static site
+needs only `assets.directory`; a Custom Domain attaches an apex or subdomain and "will create DNS records and issue necessary
+certificates"; **an existing CNAME on the hostname blocks it.** The six apex and `www` names already hold proxied records
+(DoH, 2026-10-17), whose types are not known, so before the first deploy CireSnave reads and deletes those placeholder records in
+each zone's DNS page.
+
+Steps if Workers is the answer: (1) merge the `wrangler.jsonc` PR, (2) delete the placeholder records, (3) the Workers build's
+deploy command is `npx wrangler deploy`, (4) read the build log: expect `Uploaded ... assets` and the six custom domains, (5)
+`--apply --only redirects`, (6) section 5.
+
+Not known: whether a Pages-project build fails on a root `wrangler.jsonc` that carries `routes` (so merge it only after the
+answer); whether `public/_headers` is honoured for Workers assets (the docs page read did not say; section 5's header check
+decides); the `html_handling` default (the page read did not document it; `/about` must be curled).
 
 ## 4. SPF: do not add a second record
 
