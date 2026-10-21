@@ -3,14 +3,13 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
-## 0.1.7 - 2026-10-18
+## 0.1.8 - 2026-10-21
 
-DRAFT, do not merge before CireSnave answers Pages-or-Workers (his board 234). Number is provisional (0.1.6 is draft PR #7).
+Ops tooling and docs. CireSnave ruled Workers (board 234: "234: Workers"). Number is provisional until the PM confirms at the gate.
 
-- `wrangler.jsonc` (new): Workers static-assets config for `./dist` plus Custom Domains for the six hostnames. Unrun.
-- `ops/cloudflare/plan.mjs`: `dns-pages` and `pages-domains` are now opt-in (`--only`), so a bare `--apply` does not run Pages-only steps against a
-  Workers project. `tests/plan-steps.spec.ts` pins it (with the opt-in removed the default plan lists both steps, so the test fails).
-- `ops/cloudflare/RUNBOOK.md` section 3W: the Workers variant and what is not known.
+- `wrangler.jsonc` (new): Workers static-assets config for `./dist`, `"previews": {}` (non-production builds run `npx wrangler preview`, which errors without it) and Custom Domains for the six hostnames. Unrun.
+- `ops/cloudflare/plan.mjs`: the Pages-only steps `dns-pages` and `pages-domains` are removed. `tests/plan-steps.spec.ts` pins that they are gone and that `--only` rejects them.
+- `ops/cloudflare/RUNBOOK.md`: section 3 is now the Workers project; the six placeholder DNS records must be deleted before the merge that deploys the custom domains.
 
 ## 0.1.5 - 2026-10-16
 

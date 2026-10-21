@@ -30,8 +30,7 @@ token to **this account** and **these three zones** only.
 | `email-destination` | Account: Email Routing Addresses Write |
 | `email-enable` | Zone: Zone Settings Write (the `/email/routing/dns` enable call) |
 | `email-rules` | Zone: Email Routing Rules Write |
-| `dmarc`, `dns-pages` | Zone: DNS Write |
-| `pages-domains`, and `wrangler pages` | Account: Cloudflare Pages Write ("Pages Edit") |
+| `dmarc` | Zone: DNS Write |
 | `redirects` | Zone: Single Redirect Write ("Dynamic URL Redirects Write") |
 | `hsts` (opt-in) | Zone: Zone Settings Write |
 
@@ -86,59 +85,51 @@ steps did not run):
 | 3 | `--apply --only email-rules` | 2.3 | refuses to run until the destination is verified |
 | 4 | `--apply --only dmarc` | 2.5 | see "SPF" below |
 | 5 | `--apply --only dnssec` | 1.3 | **only once every zone reads Active** (DNSSEC order above, step 4); the script prints the DS record; CireSnave enters it at each registrar |
-| 6 | Pages project, section 3 (P2 chosen) | 1.6 | CireSnave's dashboard click-through |
-| 7 | `--apply --only dns-pages,pages-domains` (Pages only; a Workers project skips this, section 3W) | 1.6 | none |
+| 6 | Workers project, section 3 (Workers chosen) | 1.6 | CireSnave deletes the six placeholder DNS records first, then the merge deploys |
+| 7 | (none: was `dns-pages,pages-domains`, Pages only) | 1.6 | none |
 | 8 | `--apply --only redirects` | 1.7 | none |
 | 9 | optional: `--apply --only hsts` | n/a | the founder's call, after steps 1 to 8 are verified |
 
-## 3. The Pages project (plan 1.6)
+## 3. The Workers project (plan 1.6)
 
-**Decided 2026-10-16 (board 226): P2, Git integration.** CireSnave chose it; the PM relayed the ruling. P1 (Direct Upload via
-`wrangler pages project create`) is not used, and Direct Upload cannot be switched to Git integration later (Cloudflare Pages
-docs, as read second-hand on 2026-10-10), so do not create the project any other way first.
+**Decided 2026-10-21 (board 234): Workers.** CireSnave's ruling, relayed by the PM, verbatim: "234: Workers". The project
+`thinkersfoundation-site` is a Cloudflare Workers project (its dashboard URL is `workers/services/view/...`, and the check
+"Workers Builds: thinkersfoundation-site" comes from it). This supersedes the 2026-10-16 Pages choice (P2, board 226). The
+`dns-pages` and `pages-domains` steps are gone from `plan.mjs`: the `/pages/projects` API does not see a Workers project, and
+Custom Domains create their own DNS records.
 
-**The dashboard click-through (CireSnave):** Workers & Pages, Create, Pages, Connect to Git, authorize the Cloudflare GitHub
-app on the `ThinkersJournal` org (an org owner must approve the install; the repo is private, so grant the app access to
-`ThinkersFoundation-site`), choose `ThinkersFoundation-site`, then:
-
-| Field | Value |
+| | Where it lives |
 |---|---|
-| Project name | **`thinkersfoundation-site` exactly**: `plan.mjs` addresses the project by that name (`PROJECT`), and a different name makes `pages-domains` fail at its first GET |
-| Production branch | `main` |
-| Build command | `npm run build` |
-| Build output directory | `dist` |
-| Node version | from `.nvmrc` (Pages reads it; if the dashboard shows a `NODE_VERSION` field, leave it empty) |
+| Config | `wrangler.jsonc` at the repo root: `assets.directory` `./dist`, `previews`, `routes` |
+| Production deploy | Workers Builds on a merge to `main`: build `npm run build`, deploy `npx wrangler deploy` |
+| Non-production (PR) builds | `npx wrangler preview`, which errors without `"previews": {}` in `wrangler.jsonc` (read from the PR #9 build log, relayed by the PM 2026-10-21) |
+| Domains and DNS | `routes` with `custom_domain: true`; Cloudflare creates the DNS records and certificates when `wrangler deploy` runs |
+| Redirects, mail, DMARC, DNSSEC | `plan.mjs` (`redirects`, `dmarc`, ...), unchanged |
 
-After that, a merge to `main` deploys, as with ThinkersJournal.com. The API cannot create a Git-integrated project without
-that interactive authorization (not confirmed from the docs; assumed). Steps 7 and 8 below are the same either way.
+What the docs say (read 2026-10-18, developers.cloudflare.com/workers/static-assets and `.../routing/custom-domains`): a static
+site needs only `assets.directory`; a Custom Domain attaches an apex or subdomain and "will create DNS records and issue
+necessary certificates"; **an existing CNAME on the hostname blocks it.**
+
+**Before the first production deploy (CireSnave, dashboard): delete the six placeholder proxied DNS records** (apex and `www`
+in each of the three zones; they resolve to Cloudflare proxy IPs and answer 522, read over DoH 2026-10-17; record types not
+known). **Do not merge the PR that carries `routes` before they are gone**: the merge triggers the production deploy, which
+tries to attach the six custom domains. Read each zone's DNS page, delete only those six names, and paste the page back so the
+lane can read it.
 
 ### Read-back checklist for steps 6 to 8
 
-Predictions first, so a wrong shape is visible. Nothing here has run. Steps 7 and 8 are run by CireSnave in his shell, as
-every `--apply` is; the lane reads what he pastes.
+Predictions first, so a wrong shape is visible. Nothing here has run. Step 8 is run by CireSnave in his shell, as every
+`--apply` is; the lane reads what he pastes.
 
-**Step 6, after the click-through (no token):**
+**Step 6, the deploy (no token):**
 
-- [ ] The first build is green in the dashboard (Deployments). Paste its last lines. A failure here is a build problem, not a DNS one.
-- [ ] `curl -sI https://thinkersfoundation-site.pages.dev/` -> `HTTP/2 200` and a `content-security-policy` header with `script-src 'self'`.
-  This proves the project and the build before any domain is attached.
-- [ ] Project name in the dashboard reads `thinkersfoundation-site` (the table above).
+- [ ] The placeholder records are deleted (see above); his paste of each zone's DNS page shows none of the six names.
+- [ ] The Workers Build for the merge is green. Paste its last lines: expect `Uploaded ... assets` and the six custom domains.
+  A failure here is a build or config problem, not DNS.
+- [ ] `curl -sI https://thinkersfoundation.net/` -> `HTTP/2 200` and a `content-security-policy` header with `script-src 'self'`.
+- [ ] After DNS settles, the other five names answer from Cloudflare (a `301` only once step 8 has run; before it, `200`).
 
-**Step 7, `--apply --only dns-pages,pages-domains` (runs `zones` first):**
-
-- [ ] `dns-pages`: for each of the 6 names (apex and `www` in 3 zones) a `GET .../dns_records?type=CNAME&name=...` -> `HTTP 200`, then
-  either `POST ... -> HTTP 200, success=true` or `exists: CNAME <name> -> <content> (left alone)`.
-  **Trap:** `ensureDns` looks only for a record of the *same type*. If a zone scan imported an `A`/`AAAA` at an apex or `www`, the
-  `POST` of the CNAME is refused (a CNAME cannot share a name with another record), the run stops at `dns-pages`, and
-  `pages-domains` did not run. Fix by reading the zone's records in the dashboard and deleting the stale one by hand; do not
-  loosen the script.
-- [ ] A rerun that finds `exists: CNAME ... -> <something other than thinkersfoundation-site.pages.dev>` is a finding: the script
-  leaves it alone and says so.
-- [ ] `pages-domains`: `GET .../pages/projects/thinkersfoundation-site` -> `HTTP 200`, three `POST .../domains` -> `HTTP 200`, then three
-  lines `<zone>: status=...`. A status other than active right after the POST (certificate validation still pending) is
-  expected and is not a failure; re-read the domain list later. **Not measured:** the exact status strings and whether a
-  second `POST` of an attached domain errors. Do not rerun `pages-domains` to "check"; read the project's domains in the dashboard.
-- [ ] After DNS settles, `curl -sI https://thinkersfoundation.net/` -> `HTTP/2 200` (section 5).
+**Step 7:** none (it was `dns-pages,pages-domains`, Pages only).
 
 **Step 8, `--apply --only redirects`:**
 
@@ -147,32 +138,9 @@ every `--apply` is; the lane reads what he pastes.
 - [ ] Run the section 5 `for h in ...` loop: five lines each `HTTP/2 301` with `location: https://thinkersfoundation.net/about`.
 - [ ] `curl -sI "https://thinkersfoundation.us/about?x=1"` -> `location: https://thinkersfoundation.net/about?x=1` (query preserved).
 
-### 3W. If the project turns out to be a Workers project (DRAFT, not decided)
-
-Why this exists: on PR #7 the check "Workers Builds: thinkersfoundation-site" failed, and its link points at
-`dash.cloudflare.com/.../workers/services/view/thinkersfoundation-site/...`, which is the Workers product, not Pages. Section 3
-and the `dns-pages`/`pages-domains` steps assume Pages. **CireSnave's answer is pending (his board item 234):** which product the
-project is, and the build log. Until then this section is a draft and nothing in it has run.
-
-| | Pages (section 3) | Workers static assets (this section) |
-|---|---|---|
-| Config | dashboard fields | `wrangler.jsonc` at the repo root (`assets.directory` `./dist`) |
-| Domains and DNS | `plan.mjs --only dns-pages,pages-domains` | `routes` with `custom_domain: true` in `wrangler.jsonc`; Cloudflare creates the DNS records and certificates when `wrangler deploy` runs |
-| Redirects, mail, DMARC, DNSSEC | unchanged | unchanged (`plan.mjs --only redirects` etc.) |
-
-What the docs say (read 2026-10-18, developers.cloudflare.com/workers/static-assets and `.../routing/custom-domains`): a static site
-needs only `assets.directory`; a Custom Domain attaches an apex or subdomain and "will create DNS records and issue necessary
-certificates"; **an existing CNAME on the hostname blocks it.** The six apex and `www` names already hold proxied records
-(DoH, 2026-10-17), whose types are not known, so before the first deploy CireSnave reads and deletes those placeholder records in
-each zone's DNS page.
-
-Steps if Workers is the answer: (1) merge the `wrangler.jsonc` PR, (2) delete the placeholder records, (3) the Workers build's
-deploy command is `npx wrangler deploy`, (4) read the build log: expect `Uploaded ... assets` and the six custom domains, (5)
-`--apply --only redirects`, (6) section 5.
-
-Not known: whether a Pages-project build fails on a root `wrangler.jsonc` that carries `routes` (so merge it only after the
-answer); whether `public/_headers` is honoured for Workers assets (the docs page read did not say; section 5's header check
-decides); the `html_handling` default (the page read did not document it; `/about` must be curled).
+Not known: whether `public/_headers` is honoured for Workers assets (the docs page read did not say; section 5's header check
+decides); the `html_handling` default (not documented on the page read; `/about` must be curled); whether `routes` is also
+read by the `wrangler preview` build (a failure there is a finding).
 
 ## 4. SPF: do not add a second record
 
@@ -237,6 +205,4 @@ A mail test is plan item 2.4 and is CireSnave's: from a different mailbox, send 
   prepends the `zones` step, which stops the run when any zone is not `active`, so `--only dnssec` makes no PATCH on a
   pending zone. This is pinned by `tests/plan-dnssec.spec.ts` (a mock stands in for the API; with the check removed,
   four of its five tests fail). An earlier draft of this note said the opposite; it was wrong.
-- **Pages is not necessarily Cloudflare's long-term product.** Their docs steer new projects at Workers static assets
-  in places. If the PM prefers that, `wrangler deploy` with `[assets]` replaces section 3 and the DNS and redirect
-  steps are unchanged.
+- **Pages vs Workers is decided (Workers, 2026-10-21, section 3).** Cloudflare's docs steer new projects at Workers static assets.

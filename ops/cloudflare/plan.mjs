@@ -21,7 +21,6 @@ import { argv, env, exit } from 'node:process';
 
 const CANONICAL = 'thinkersfoundation.net';
 const ZONES = ['thinkersfoundation.net', 'thinkersfoundation.us', 'thinkers.foundation'];
-const PROJECT = 'thinkersfoundation-site';
 // Role mailboxes, PRE-FILING-PLAN.md section 0 item 2. Each exists on purpose; the
 // catch-all then takes everything else.
 const ROLES = ['admin', 'info', 'filings', 'security', 'abuse', 'postmaster', 'dmca', 'treasurer'];
@@ -190,31 +189,6 @@ const STEPS = [
         });
         await call('GET', `/zones/${zoneId[z]}/dns_records?type=TXT`);
       }
-    },
-  },
-  {
-    id: 'dns-pages',
-    optIn: true, // Pages projects only: a Workers project gets its DNS from Custom Domains (RUNBOOK 3W)
-    plan: 'PAGES ONLY, run with --only. 1.6 proxied CNAMEs (apex and www) to the Pages project, in each zone',
-    async run() {
-      for (const z of ZONES) {
-        for (const name of [z, `www.${z}`]) {
-          await ensureDns(z, { type: 'CNAME', name, content: `${PROJECT}.pages.dev`, proxied: true, ttl: 1 });
-        }
-      }
-    },
-  },
-  {
-    id: 'pages-domains',
-    optIn: true, // Pages projects only: the /pages/projects API does not see a Workers project
-    plan: 'PAGES ONLY, run with --only. 1.6 attach the three apex hostnames to the Pages project (the project must exist: RUNBOOK.md section 3, dashboard Git integration)',
-    async run() {
-      await call('GET', `/accounts/${ACCOUNT}/pages/projects/${PROJECT}`);
-      for (const z of ZONES) {
-        await call('POST', `/accounts/${ACCOUNT}/pages/projects/${PROJECT}/domains`, { name: z });
-      }
-      const r = await call('GET', `/accounts/${ACCOUNT}/pages/projects/${PROJECT}/domains`);
-      if (apply) for (const d of r.result) console.log(`    ${d.name}: status=${d.status}`);
     },
   },
   {

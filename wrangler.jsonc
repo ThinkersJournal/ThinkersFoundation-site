@@ -1,6 +1,5 @@
-// DRAFT, Workers-variant only (RUNBOOK.md section 3W). Not used by Cloudflare Pages, which ignores it
-// unless the project is a Workers project; do not merge before CireSnave says the project is Workers
-// (CIRESNAVE-DECISIONS item 234). Nothing here has been deployed or run.
+// Cloudflare Workers static assets (CireSnave ruled Workers, board 234, 2026-10-21; RUNBOOK.md section 3).
+// Nothing here has been deployed or run.
 //
 // A static site with no Worker script: Wrangler uploads ./dist as static assets.
 // Source: developers.cloudflare.com/workers/static-assets (read 2026-10-18); the page's example
@@ -14,10 +13,12 @@
     // dist/404.html exists (src/pages/404.astro): serve it with a 404 status.
     "not_found_handling": "404-page"
   },
+  // Non-production (PR) builds run `npx wrangler preview`, which errors without this key (PR #9 build log, relayed by the PM).
+  "previews": {},
   // Custom Domains: Cloudflare creates the DNS records and certificates itself, so the Pages-only
-  // plan.mjs steps dns-pages and pages-domains are NOT run for a Workers project. The docs say an
+  // DNS is not scripted in plan.mjs. The docs say an
   // existing CNAME on a hostname blocks this; the six names below already have proxied records
-  // (read 2026-10-17 over DoH), so delete those placeholders in the dashboard first (RUNBOOK 3W).
+  // (read 2026-10-17 over DoH): CireSnave deletes those placeholders in the dashboard BEFORE the merge that carries this file (RUNBOOK 3).
   // The non-canonical names are listed too: the redirect rules (plan.mjs, step redirects) only
   // fire for hostnames that reach Cloudflare's proxy, and a Custom Domain makes that so.
   "routes": [
