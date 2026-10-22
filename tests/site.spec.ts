@@ -26,9 +26,14 @@ test('unknown route serves the branded 404', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toContainText('not here');
 });
 
-test('contact publishes no postal address while none is decided', async ({ page }) => {
+test('contact publishes the mailing address CireSnave chose (control: no 501(c)(3) wording anywhere)', async ({ page }) => {
   await page.goto('/contact');
-  await expect(page.locator('address')).toHaveCount(0);
+  await expect(page.locator('address')).toContainText('7600 E Las Palmas Drive');
+  await expect(page.locator('address')).toContainText('Prescott Valley, Arizona 86314');
+  for (const route of ROUTES) {
+    await page.goto(route);
+    expect(await page.content()).not.toMatch(/501\(c\)|tax-exempt/i);
+  }
 });
 
 test('no page loads anything from another origin', async ({ page }) => {
