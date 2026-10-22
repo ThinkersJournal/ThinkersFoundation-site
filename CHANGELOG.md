@@ -3,6 +3,16 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.8 - 2026-10-21
+
+Ops tooling and docs. CireSnave ruled Workers (board 234: "234: Workers"). Number is provisional until the PM confirms at the gate.
+
+- `wrangler.jsonc` (new): Workers static-assets config for `./dist`, `"previews": {}` (non-production builds run `npx wrangler preview`, which errors without it) and Custom Domains for the six hostnames. Unrun.
+- `ops/cloudflare/plan.mjs`: the Pages-only steps `dns-pages` and `pages-domains` are removed. `tests/plan-steps.spec.ts` pins that they are gone and that `--only` rejects them.
+- `ops/cloudflare/RUNBOOK.md`: section 3 is now the Workers project; the nine placeholder DNS records (apex, `www` and `*` in each zone; PM correction 2026-10-22, was six) must be deleted before the merge that deploys the custom domains.
+- `src/consts.ts`: `MAILING_ADDRESS` set to CireSnave's chosen public address (PRE-FILING-PLAN.md section 0 item 3; confirmed by him directly 2026-10-22). `/contact` renders it; `tests/site.spec.ts` pins it and asserts no "501(c)(3)"/"tax-exempt" wording on any route.
+- `ops/cloudflare/plan.mjs`: new opt-in read-only step `dns-preflight` fails while any A/AAAA/CNAME remains on the apex, `www` or `*` of a zone. It never deletes and does not look at MX/TXT/DS. Unrun against the live API.
+
 ## 0.1.5 - 2026-10-16
 
 Docs plus one printed string in `ops/cloudflare/plan.mjs` (the `pages-domains` plan line); no behaviour change.

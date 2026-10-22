@@ -17,10 +17,13 @@ export const STATUS =
 // only admin@ (plus security@ and abuse@ on /contact) is published.
 export const CONTACT_EMAIL = 'admin@thinkersfoundation.net';
 
-// Section 0, item 3 is undecided (registered-agent address vs PO box vs home). Until
-// CireSnave decides, no postal address is published rather than a guessed one.
-// Set to an array of address lines once it is decided.
-export const MAILING_ADDRESS: string[] | null = null;
+// PRE-FILING-PLAN.md section 0, item 3: CireSnave chose his home address as the public mailing address
+// (2026-10-10, restated 2026-10-22: "my home address is the address we will be using").
+export const MAILING_ADDRESS: string[] | null = [
+  'Eric Evans',
+  '7600 E Las Palmas Drive',
+  'Prescott Valley, Arizona 86314',
+];
 
 // Board and officers: published only once each has agreed to be named (section 3).
 export const BOARD: { name: string; role: string }[] = [];

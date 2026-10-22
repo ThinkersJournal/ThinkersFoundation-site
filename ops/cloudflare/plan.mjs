@@ -21,7 +21,6 @@ import { argv, env, exit } from 'node:process';
 
 const CANONICAL = 'thinkersfoundation.net';
 const ZONES = ['thinkersfoundation.net', 'thinkersfoundation.us', 'thinkers.foundation'];
-const PROJECT = 'thinkersfoundation-site';
 // Role mailboxes, PRE-FILING-PLAN.md section 0 item 2. Each exists on purpose; the
 // catch-all then takes everything else.
 const ROLES = ['admin', 'info', 'filings', 'security', 'abuse', 'postmaster', 'dmca', 'treasurer'];
@@ -193,29 +192,6 @@ const STEPS = [
     },
   },
   {
-    id: 'dns-pages',
-    plan: '1.6 proxied CNAMEs (apex and www) to the Pages project, in each zone',
-    async run() {
-      for (const z of ZONES) {
-        for (const name of [z, `www.${z}`]) {
-          await ensureDns(z, { type: 'CNAME', name, content: `${PROJECT}.pages.dev`, proxied: true, ttl: 1 });
-        }
-      }
-    },
-  },
-  {
-    id: 'pages-domains',
-    plan: '1.6 attach the three apex hostnames to the Pages project (the project must exist: RUNBOOK.md section 3, dashboard Git integration)',
-    async run() {
-      await call('GET', `/accounts/${ACCOUNT}/pages/projects/${PROJECT}`);
-      for (const z of ZONES) {
-        await call('POST', `/accounts/${ACCOUNT}/pages/projects/${PROJECT}/domains`, { name: z });
-      }
-      const r = await call('GET', `/accounts/${ACCOUNT}/pages/projects/${PROJECT}/domains`);
-      if (apply) for (const d of r.result) console.log(`    ${d.name}: status=${d.status}`);
-    },
-  },
-  {
     id: 'redirects',
     plan: '1.7 single redirects, 301, path and query preserved: .us and .foundation and every www go to the canonical apex',
     async run() {
@@ -240,6 +216,24 @@ const STEPS = [
         });
         await call('GET', `/zones/${zoneId[z]}/rulesets/phases/http_request_dynamic_redirect/entrypoint`);
       }
+    },
+  },
+  {
+    id: 'dns-preflight',
+    optIn: true,
+    plan: 'READ-ONLY, run before the merge that deploys Custom Domains: fails while any placeholder A/AAAA/CNAME remains on the apex, www or the * wildcard of a zone (3 per zone, 9 in all). Never deletes; MX/TXT/DS are not looked at',
+    async run() {
+      const left = [];
+      for (const z of ZONES) {
+        for (const name of [z, `www.${z}`, `*.${z}`]) {
+          const r = await call('GET', `/zones/${zoneId[z]}/dns_records?name=${encodeURIComponent(name)}`);
+          if (!apply) continue;
+          const web = r.result.filter((x) => ['A', 'AAAA', 'CNAME'].includes(x.type));
+          for (const x of web) left.push(`${x.type} ${x.name} -> ${x.content} (proxied=${x.proxied})`);
+          console.log(`    ${name}: ${web.length} A/AAAA/CNAME record(s)`);
+        }
+      }
+      if (left.length) throw new Error(`placeholders still present, delete them in the dashboard first:\n      ${left.join('\n      ')}`);
     },
   },
   {

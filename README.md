@@ -1,7 +1,7 @@
 # Thinker's Foundation: website
 
 The public page for Thinker's Foundation, which is **being formed and does not yet exist as a legal entity**. It is a
-static [Astro](https://astro.build) site, meant for Cloudflare Pages, under three hostnames that all land on one
+static [Astro](https://astro.build) site, meant for Cloudflare Workers (static assets), under three hostnames that all land on one
 canonical: `thinkersfoundation.net` (canonical), `thinkersfoundation.us` and `thinkers.foundation` (301 to it).
 
 Built to the same shape as [ThinkersJournal.com](https://github.com/ThinkersJournal/ThinkersJournal.com): same fonts and
