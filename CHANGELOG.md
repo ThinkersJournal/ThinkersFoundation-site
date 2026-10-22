@@ -3,17 +3,23 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.10 - 2026-10-23
+
+Ops tooling. Number is provisional until the PM confirms at the gate. Decision 251 A (CireSnave: "A for now and B when each project becomes ready").
+
+- `ops/cloudflare/plan.mjs`: new opt-in step `redirects-brands`: `persistant.io` -> `https://github.com/ciresnave/PersistAnt`, `authant.net` -> `https://authframework.dev`; apex and `www`, 301, path and query not carried. Adds proxied placeholder A records (192.0.2.1) where no A record exists, so the rule can fire. Plan mode only so far; unrun against the live API. `tests/plan-steps.spec.ts` pins it.
+- `ops/cloudflare/RUNBOOK.md`: section 3b, CireSnave's steps and the read-back.
+
 ## 0.1.9 - 2026-10-22
 
-CI only (number provisional until the PM confirms at the gate); no change to the site or to `ops/`. DRAFT: do not merge until a runner is registered, or every job queues forever.
+CI only; no change to the site or to `ops/`.
 
 - `.github/workflows/ci.yml` is split into `ci-pr.yml` (pull_request only; every job `if: head.repo.full_name == github.repository`)
   and `ci-main.yml` (push to main, workflow_dispatch; no `if`). All eight jobs `runs-on: [self-hosted, windows]` (hosted jobs die
   on billing for this private repo). Job names are unchanged, so the required checks keep their names. Duplicated, not a reusable
   workflow: the lint rejects `workflow_call`.
 - Playwright job: the Linux-only browser cache and `--with-deps` steps are replaced by `npx playwright install chromium`.
-- Not measured: nothing has run on `gh-runner`. Unknown until it does: Playwright browser install under that account, Node via
-  `setup-node`, `npm ci` and `astro build` on Windows, and the freshness spec's git fixtures on Windows.
+- Measured 2026-10-23 on the `self-hosted, windows` runner (PR #11, run 39957809088): all four required jobs passed (astro build 2m22s, Playwright + axe 1m37s, freshness guard 1m9s, astro check 53s). The Windows unknowns (Chromium install, `setup-node`, `npm ci`/`astro build`, freshness git fixtures) all passed.
 - `runner-lint --private` (agentlife origin/main, v0.16.8): 0 findings on both files; the earlier single-file `||` form and a PR job with no `if` each give 4 findings.
 
 ## 0.1.8 - 2026-10-21
