@@ -24,6 +24,13 @@ const ZONES = ['thinkersfoundation.net', 'thinkersfoundation.us', 'thinkers.foun
 // Role mailboxes, PRE-FILING-PLAN.md section 0 item 2. Each exists on purpose; the
 // catch-all then takes everything else.
 const ROLES = ['admin', 'info', 'filings', 'security', 'abuse', 'postmaster', 'dmca', 'treasurer'];
+// Decision 251 (CireSnave 2026-10-22): "A for now and B when each project becomes ready." A = the
+// brand domain redirects to the project's home. Opt-in step `redirects-brands`; the zones must already
+// be active in Cloudflare (added by CireSnave, nameservers set at the registrar).
+const BRANDS = [
+  { zone: 'persistant.io', target: 'https://github.com/ciresnave/PersistAnt' },
+  { zone: 'authant.net', target: 'https://authframework.dev' },
+];
 const API = 'https://api.cloudflare.com/client/v4';
 
 const apply = argv.includes('--apply');
@@ -215,6 +222,38 @@ const STEPS = [
           ],
         });
         await call('GET', `/zones/${zoneId[z]}/rulesets/phases/http_request_dynamic_redirect/entrypoint`);
+      }
+    },
+  },
+  {
+    id: 'redirects-brands',
+    optIn: true,
+    plan: 'OPT-IN, decision 251 A: persistant.io and authant.net (apex and www) 301 to the project home, path and query NOT carried. Adds a proxied placeholder A record on the apex and www (a redirect only fires on a proxied name) unless an A record already exists. Zones must already be active. Runs only with --only redirects-brands',
+    async run() {
+      for (const { zone, target } of BRANDS) {
+        zoneId[zone] = `<zone_id:${zone}>`;
+        const r = await call('GET', `/zones?name=${zone}&account.id=${ACCOUNT}`);
+        if (apply) {
+          const hit = r.result[0];
+          if (!hit) throw new Error(`zone ${zone} not visible to this token (CireSnave adds it first)`);
+          if (hit.status !== 'active') throw new Error(`zone ${zone} is ${hit.status}, not active (nameservers not yet set at the registrar)`);
+          zoneId[zone] = hit.id;
+        }
+        for (const name of [zone, `www.${zone}`]) {
+          await ensureDns(zone, { type: 'A', name, content: '192.0.2.1', proxied: true, ttl: 1, comment: 'placeholder for the redirect rule; never reached' });
+        }
+        const hosts = [zone, `www.${zone}`];
+        await call('PUT', `/zones/${zoneId[zone]}/rulesets/phases/http_request_dynamic_redirect/entrypoint`, {
+          rules: [
+            {
+              description: `${hosts.join(', ')} -> ${target} (301)`,
+              expression: hosts.map((h) => `(http.host eq "${h}")`).join(' or '),
+              action: 'redirect',
+              action_parameters: { from_value: { status_code: 301, target_url: { value: target }, preserve_query_string: false } },
+            },
+          ],
+        });
+        await call('GET', `/zones/${zoneId[zone]}/rulesets/phases/http_request_dynamic_redirect/entrypoint`);
       }
     },
   },

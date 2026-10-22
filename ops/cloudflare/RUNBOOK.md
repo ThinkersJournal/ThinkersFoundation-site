@@ -143,6 +143,22 @@ Not known: whether `public/_headers` is honoured for Workers assets (the docs pa
 decides); the `html_handling` default (not documented on the page read; `/about` must be curled); whether `routes` is also
 read by the `wrangler preview` build (a failure there is a finding).
 
+## 3b. Brand-domain redirects (decision 251 A)
+
+`persistant.io` -> the PersistAnt repo, `authant.net` -> `authframework.dev`. Option B (one-page sites) comes later.
+
+CireSnave's steps, in order (nothing here is automated; the token must not carry Zone Edit):
+
+1. Cloudflare dashboard -> Add a domain -> `persistant.io`, then again for `authant.net`; pick the plan he uses for the other zones. If it offers to import existing DNS records, accept.
+2. Cloudflare shows two nameservers per zone (`<name>.ns.cloudflare.com`; the exact pair is shown only after step 1). At each registrar, replace the domain's nameservers with exactly those two. Paste both pairs back.
+3. Wait for each zone to read "Active" (minutes to hours).
+
+Then, with the same token and env as step 8 (the token needs Zone: DNS Write and Single Redirect Write on the two new zones):
+
+- `node ops/cloudflare/plan.mjs --only redirects-brands` (plan, no network), then `--apply --only redirects-brands` once the PM says so. The step fails loudly if a zone is not visible or not active.
+- Read-back: `curl -sI https://persistant.io/x?y=1` -> `HTTP/2 301`, `location: https://github.com/ciresnave/PersistAnt`; `curl -sI https://www.authant.net/` -> `301`, `location: https://authframework.dev`. Query and path are deliberately dropped.
+- The A records at 192.0.2.1 are placeholders; nothing is served from them.
+
 ## 4. SPF: do not add a second record
 
 Plan item 2.5 says to publish a null SPF if nothing sends mail. Plan item 2.1 says enabling Email Routing adds the SPF

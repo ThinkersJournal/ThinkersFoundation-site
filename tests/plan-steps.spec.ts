@@ -25,6 +25,16 @@ test.describe('plan.mjs step selection', () => {
     expect(r.stderr).toContain('unknown step(s): dns-pages, pages-domains');
   });
 
+  test('redirects-brands is opt-in and plans one redirect per brand zone (control: default plan omits it)', () => {
+    expect(plan().stdout).not.toContain('== redirects-brands:');
+    const r = plan('--only', 'redirects-brands');
+    expect(r.status).toBe(0);
+    expect(r.stdout).toContain('"target_url":{"value":"https://authframework.dev"}');
+    expect(r.stdout).toContain('"target_url":{"value":"https://github.com/ciresnave/PersistAnt"}');
+    expect(r.stdout.split('\n').filter((l) => l.includes('PUT ') && l.includes('/rulesets/'))).toHaveLength(2);
+    expect(r.stdout).not.toContain('zone_id:thinkersfoundation');
+  });
+
   test('dns-preflight is opt-in, read-only, and plans 9 lookups (control: default plan omits it)', () => {
     expect(plan().stdout).not.toContain('== dns-preflight:');
     const r = plan('--only', 'dns-preflight');

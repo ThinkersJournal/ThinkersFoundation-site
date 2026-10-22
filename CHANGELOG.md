@@ -3,6 +3,13 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.9 - 2026-10-22
+
+Ops tooling. Number is provisional until the PM allocates it at the gate. Decision 251 A (CireSnave: "A for now and B when each project becomes ready").
+
+- `ops/cloudflare/plan.mjs`: new opt-in step `redirects-brands`: `persistant.io` -> `https://github.com/ciresnave/PersistAnt`, `authant.net` -> `https://authframework.dev`; apex and `www`, 301, path and query not carried. Adds proxied placeholder A records (192.0.2.1) where no A record exists, so the rule can fire. Plan mode only so far; unrun against the live API. `tests/plan-steps.spec.ts` pins it.
+- `ops/cloudflare/RUNBOOK.md`: section 3b, CireSnave's steps and the read-back.
+
 ## 0.1.8 - 2026-10-21
 
 Ops tooling and docs. CireSnave ruled Workers (board 234: "234: Workers"). Number is provisional until the PM confirms at the gate.
