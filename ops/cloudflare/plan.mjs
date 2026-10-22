@@ -219,6 +219,24 @@ const STEPS = [
     },
   },
   {
+    id: 'dns-preflight',
+    optIn: true,
+    plan: 'READ-ONLY, run before the merge that deploys Custom Domains: fails while any placeholder A/AAAA/CNAME remains on the apex, www or the * wildcard of a zone (3 per zone, 9 in all). Never deletes; MX/TXT/DS are not looked at',
+    async run() {
+      const left = [];
+      for (const z of ZONES) {
+        for (const name of [z, `www.${z}`, `*.${z}`]) {
+          const r = await call('GET', `/zones/${zoneId[z]}/dns_records?name=${encodeURIComponent(name)}`);
+          if (!apply) continue;
+          const web = r.result.filter((x) => ['A', 'AAAA', 'CNAME'].includes(x.type));
+          for (const x of web) left.push(`${x.type} ${x.name} -> ${x.content} (proxied=${x.proxied})`);
+          console.log(`    ${name}: ${web.length} A/AAAA/CNAME record(s)`);
+        }
+      }
+      if (left.length) throw new Error(`placeholders still present, delete them in the dashboard first:\n      ${left.join('\n      ')}`);
+    },
+  },
+  {
     id: 'hsts',
     optIn: true,
     plan: 'OPT-IN, founder\'s call (public/_headers says so): HSTS, one year, no includeSubDomains, no preload. Runs only with --only hsts',

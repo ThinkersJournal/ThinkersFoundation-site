@@ -85,7 +85,7 @@ steps did not run):
 | 3 | `--apply --only email-rules` | 2.3 | refuses to run until the destination is verified |
 | 4 | `--apply --only dmarc` | 2.5 | see "SPF" below |
 | 5 | `--apply --only dnssec` | 1.3 | **only once every zone reads Active** (DNSSEC order above, step 4); the script prints the DS record; CireSnave enters it at each registrar |
-| 6 | Workers project, section 3 (Workers chosen) | 1.6 | CireSnave deletes the six placeholder DNS records first, then the merge deploys |
+| 6 | Workers project, section 3 (Workers chosen) | 1.6 | CireSnave deletes the nine placeholder DNS records first, then the merge deploys |
 | 7 | (none: was `dns-pages,pages-domains`, Pages only) | 1.6 | none |
 | 8 | `--apply --only redirects` | 1.7 | none |
 | 9 | optional: `--apply --only hsts` | n/a | the founder's call, after steps 1 to 8 are verified |
@@ -110,11 +110,12 @@ What the docs say (read 2026-10-18, developers.cloudflare.com/workers/static-ass
 site needs only `assets.directory`; a Custom Domain attaches an apex or subdomain and "will create DNS records and issue
 necessary certificates"; **an existing CNAME on the hostname blocks it.**
 
-**Before the first production deploy (CireSnave, dashboard): delete the six placeholder proxied DNS records** (apex and `www`
-in each of the three zones; they resolve to Cloudflare proxy IPs and answer 522, read over DoH 2026-10-17; record types not
-known). **Do not merge the PR that carries `routes` before they are gone**: the merge triggers the production deploy, which
-tries to attach the six custom domains. Read each zone's DNS page, delete only those six names, and paste the page back so the
-lane can read it.
+**Before the first production deploy (CireSnave, dashboard): delete the nine placeholder proxied DNS records** (apex, `www` and the
+wildcard `*` in each of the three zones; all point at 185.53.179.128 and resolve to Cloudflare proxy IPs; a random subdomain resolves
+in all three zones, DoH probe 2026-10-22; the wildcard count is from PM's relay of CireSnave's screenshot of thinkers.foundation, the other two zones are inferred from the DoH probe). **Do not merge the PR that carries `routes` before they are gone**: the merge triggers
+the production deploy, which tries to attach the six custom domains. Delete only those nine names; **leave every MX, TXT and DS
+record, and any CNAME not on those three names, alone.** Then check: `node ops/cloudflare/plan.mjs --apply --only zones,dns-preflight` (read-only; CireSnave runs it, the
+lane reads the paste) must end with no "STOPPED", and a DoH query for the apex, `www` and a random subdomain of each zone must return no A.
 
 ### Read-back checklist for steps 6 to 8
 
@@ -123,7 +124,7 @@ Predictions first, so a wrong shape is visible. Nothing here has run. Step 8 is 
 
 **Step 6, the deploy (no token):**
 
-- [ ] The placeholder records are deleted (see above); his paste of each zone's DNS page shows none of the six names.
+- [ ] The placeholder records are deleted (see above); his paste of each zone's DNS page shows none of the nine names.
 - [ ] The Workers Build for the merge is green. Paste its last lines: expect `Uploaded ... assets` and the six custom domains.
   A failure here is a build or config problem, not DNS.
 - [ ] `curl -sI https://thinkersfoundation.net/` -> `HTTP/2 200` and a `content-security-policy` header with `script-src 'self'`.

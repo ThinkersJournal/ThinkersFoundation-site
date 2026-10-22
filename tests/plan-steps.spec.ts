@@ -24,4 +24,15 @@ test.describe('plan.mjs step selection', () => {
     expect(r.status).toBe(2);
     expect(r.stderr).toContain('unknown step(s): dns-pages, pages-domains');
   });
+
+  test('dns-preflight is opt-in, read-only, and plans 9 lookups (control: default plan omits it)', () => {
+    expect(plan().stdout).not.toContain('== dns-preflight:');
+    const r = plan('--only', 'dns-preflight');
+    expect(r.status).toBe(0);
+    const gets = r.stdout.split('\n').filter((l) => l.includes('/dns_records?name='));
+    expect(gets).toHaveLength(9);
+    expect(gets.every((l) => l.trim().startsWith('GET '))).toBe(true);
+    expect(r.stdout).toContain('dns_records?name=*.thinkers.foundation');
+    expect(r.stdout).not.toMatch(/\b(POST|PUT|PATCH|DELETE)\b/);
+  });
 });
