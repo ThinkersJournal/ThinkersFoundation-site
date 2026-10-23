@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.13 - 2026-10-23
+
+CI only; number provisional until the PM confirms at the gate.
+
+- `.github/workflows/ci-pr.yml`: the advisory `portfolio` job is repinned from `c665210a` to `789b0122` (coderipper#125: Git Bash on Windows self-hosted runners, empty `RUSTC_WRAPPER`, default-branch guard). Retested at `8567004f` and `61ae0fbc` on this runner (runs 40008610765, 40010422512): the job passes and CodeRipper reports no issues. Still advisory, not a required check.
+
 ## 0.1.12 - 2026-10-23
 
 CI only; number provisional until the PM confirms at the gate. CireSnave 2026-10-23: "Roll out advisory-only, non-blocking CodeRipper checks everywhere."
