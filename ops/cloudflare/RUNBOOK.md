@@ -135,12 +135,14 @@ Predictions first, so a wrong shape is visible. Nothing here has run. Step 8 is 
 **Step 8, `--apply --only redirects`:**
 
 - [ ] Per zone: `PUT .../rulesets/phases/http_request_dynamic_redirect/entrypoint -> HTTP 200, success=true`, then a `GET` -> `HTTP 200`.
-  The rule JSON is untested against the live API (section 6), so a 4xx on the first `PUT` is a script finding, not a user error.
+  **Run 2026-10-23 (PM, `--apply --only redirects`): `PUT` and `GET` HTTP 200 on all three zones.** The rule JSON is now proven against the live API.
+  Read-back by `curl` (lane, 2026-10-23, `/about?x=1`): the five non-canonical names each answer `301` with `Location: https://thinkersfoundation.net/about?x=1` (query kept); the canonical `/` answers `200` with a `content-security-policy` (so `public/_headers` IS honoured for Workers assets).
+  The canonical `/about` answers `307` to `/about/` (the Workers assets `html_handling` default adds the trailing slash), so a redirected visitor takes 301 then 307 then 200; harmless, but the rule could target `/about/` form if the extra hop ever matters.
+  The `PUT` replaces a zone's whole redirect ruleset, so any rule added later by hand in the dashboard is lost by a rerun.
 - [ ] Run the section 5 `for h in ...` loop: five lines each `HTTP/2 301` with `location: https://thinkersfoundation.net/about`.
 - [ ] `curl -sI "https://thinkersfoundation.us/about?x=1"` -> `location: https://thinkersfoundation.net/about?x=1` (query preserved).
 
-Not known: whether `public/_headers` is honoured for Workers assets (the docs page read did not say; section 5's header check
-decides); the `html_handling` default (not documented on the page read; `/about` must be curled); whether `routes` is also
+Not known: whether `routes` is also
 read by the `wrangler preview` build (a failure there is a finding).
 
 ## 3b. Brand-domain redirects (decision 251 A)
@@ -208,9 +210,7 @@ A mail test is plan item 2.4 and is CireSnave's: from a different mailbox, send 
 
 ## 6. Things this runbook knows it does not know
 
-- **The redirect-rule JSON** (`from_value.target_url.expression` with `concat(...)`, `status_code: 301`,
-  `preserve_query_string`) is assembled from the docs' API examples and the dashboard's described behaviour, not
-  copied from one worked example. The first `redirects` run is a test; `GET` the entrypoint back and `curl` it.
+- **The redirect-rule JSON** was assembled from the docs and is now PROVEN for the three thinkersfoundation zones (run and curl read-back in section 3, step 8). The `redirects-brands` rule (`target_url.value`, static target) is a different shape and is still unrun.
 - **Idempotency.** `dns` steps skip a record that already exists. `email-rules` does **not** skip existing rules; a
   second run creates duplicates. If a run stops half-way, delete the partial rules in the dashboard or read them back
   first.
