@@ -144,3 +144,16 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
+
+  # ADVISORY, not a required check (CireSnave 2026-10-23: "Roll out advisory-only, non-blocking
+  # CodeRipper checks everywhere."). Pull requests only, so it has no twin in ci-main.yml. The
+  # reusable workflow is pinned to a commit of ciresnave/coderipper (public); `runs-on` is the
+  # self-hosted label because this repo is private. Do not add it to branch protection.
+  portfolio:
+    name: Portfolio checks (advisory)
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: read
+    uses: ciresnave/coderipper/.github/workflows/portfolio.yml@c665210ad0972cf3ddb7bc81bdd7800c3248a938
+    with:
+      runs-on: self-hosted
