@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.11 - 2026-10-23
+
+Docs only (number provisional until the PM confirms at the gate).
+
+- `ops/cloudflare/RUNBOOK.md`: step 8 (`--only redirects`) recorded as run 2026-10-23 with its curl read-back; the "rule JSON untested" caveat and the `html_handling` and `_headers` unknowns are resolved (`/about` 307s to `/about/`; `_headers` is honoured).
+
 ## 0.1.10 - 2026-10-23
 
 Ops tooling. Number is provisional until the PM confirms at the gate. Decision 251 A (CireSnave: "A for now and B when each project becomes ready").
