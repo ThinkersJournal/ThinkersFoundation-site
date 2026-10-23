@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.12 - 2026-10-23
+
+CI only; number provisional until the PM confirms at the gate. CireSnave 2026-10-23: "Roll out advisory-only, non-blocking CodeRipper checks everywhere."
+
+- `.github/workflows/ci-pr.yml`: new job `portfolio` ("Portfolio checks (advisory)") calling `ciresnave/coderipper` `portfolio.yml` at `c665210a`, `runs-on: self-hosted`. Pull requests only; NOT a required check, so branch protection is unchanged. Its Rust-only rules report "no Rust crate at this path" here. Unmeasured: the first run installs coderipper with `cargo install` on the Windows runner.
+
 ## 0.1.11 - 2026-10-23
 
 Docs only (number provisional until the PM confirms at the gate).
