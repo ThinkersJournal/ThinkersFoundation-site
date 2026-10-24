@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.19 - 2026-10-24
+
+CI only; number provisional until the PM confirms at the gate.
+
+- `ci-pr.yml`: advisory CodeRipper `portfolio` job repinned from d14a22b6 (0.9.14) to ee9c3950 (0.9.24), which adds patent-index-match and lockfile/Gradle catalog reading; a transitive match is at most Medium and cannot fail the gate.
+
 ## 0.1.18 - 2026-10-24
 
 Docs only; number provisional until the PM confirms at the gate.
