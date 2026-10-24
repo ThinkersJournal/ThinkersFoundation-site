@@ -1,8 +1,8 @@
 # Cloudflare runbook: three domains, one site, mail forwarded
 
-Implements `PRE-FILING-PLAN.md` sections 1 and 2. **Nothing in this file has been run.** No call has been made to
-Cloudflare or to any registrar. `plan.mjs` is the executable form of the API steps; run in its default mode it
-prints every call and sends none.
+Implements `PRE-FILING-PLAN.md` sections 1 and 2. **Most of this has been run** (zones, mail, DNSSEC, deploy, the three
+foundation-zone redirects; section 3 step 8 has the record). Not yet run: `brand-zones` and `redirects-brands` (3b).
+`plan.mjs` is the executable form of the API steps; run in its default mode it prints every call and sends none.
 
 **Do not run `--apply` or any command marked REAL until the PM says so.**
 
@@ -119,8 +119,8 @@ lane reads the paste) must end with no "STOPPED", and a DoH query for the apex, 
 
 ### Read-back checklist for steps 6 to 8
 
-Predictions first, so a wrong shape is visible. Nothing here has run. Step 8 is run by CireSnave in his shell, as every
-`--apply` is; the lane reads what he pastes.
+Predictions first, so a wrong shape is visible. Steps 6 and 8 have since run (step 8 by the PM, 2026-10-23; the record is
+under it); the list is kept as the checklist. Every `--apply` is run by the PM; the lane reads back.
 
 **Step 6, the deploy (no token):**
 
