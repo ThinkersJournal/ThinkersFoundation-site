@@ -102,7 +102,7 @@ Custom Domains create their own DNS records.
 |---|---|
 | Config | `wrangler.jsonc` at the repo root: `assets.directory` `./dist`, `previews`, `routes` |
 | Production deploy | Workers Builds on a merge to `main`: build `npm run build`, deploy `npx wrangler deploy` |
-| Non-production (PR) builds | `npx wrangler preview`, which errors without `"previews": {}` in `wrangler.jsonc` (read from the PR #9 build log, relayed by the PM 2026-10-21) |
+| Non-production (PR) builds | `npx wrangler preview` today; the fix for re-pushed branches (error 100338, build 5125a872) is `npm run deploy:preview`, which needs the dashboard deploy command changed (not done). `wrangler preview` errors without `"previews": {}` in `wrangler.jsonc` (read from the PR #9 build log, relayed by the PM 2026-10-21) |
 | Domains and DNS | `routes` with `custom_domain: true`; Cloudflare creates the DNS records and certificates when `wrangler deploy` runs |
 | Redirects, mail, DMARC, DNSSEC | `plan.mjs` (`redirects`, `dmarc`, ...), unchanged |
 

@@ -19,6 +19,8 @@ The lane's source of work. One row per item; the owner is who must act next. Fac
 | 11 | Licence holder line: assign the work to the corporation and use its exact legal name (README, plan item 5.9) | Lane | HELD by incorporation: the entity does not exist yet. |
 | 12 | Google Workspace for Nonprofits (VERIFY-FINDINGS 8) | CireSnave | HELD by IRS 501(c)(3) recognition; not before the IRS letter. Nothing to do now. |
 | 13 | Canonical `/about` answers `307` to `/about/`, so a redirected visitor takes 301, 307, 200 (RUNBOOK 3, step 8) | Lane | OPEN, optional: retarget the rule at the `/about/` form only if the hop ever matters. |
+| 14 | Workers Builds re-push fails: `wrangler preview` answers `A preview with name '<branch>' already exists [code: 100338]` on the second push of a branch (build 5125a872, wrangler 4.152.0, 2026-10-24; #26 passed because it was pushed once) | CireSnave (dashboard), then lane | Repo side done in 0.1.21: `npm run deploy:preview` deletes the named preview and recreates it once on exactly that error. NOT active: CireSnave sets the non-production deploy command in the Workers Builds dashboard to `npm run deploy:preview` (board 280). Then push one branch twice and read both builds. |
+| 15 | Upstream report to `cloudflare/workers-sdk`: `wrangler preview` looks a preview up, finds nothing, then creation says the name exists | CireSnave (OK to file) | HELD, NOT FILED: outward-facing; needs his OK (board 280). Evidence: the build 5125a872 log lines; wrangler 4.141.0 and 4.152.0 both run get-then-edit in source. |
 
 ## Standing rules for this repo
 

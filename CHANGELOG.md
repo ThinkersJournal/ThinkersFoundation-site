@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.21 - 2026-10-24
+
+Tooling; number provisional until the PM confirms at the gate.
+
+- `scripts/deploy-preview.mjs` (new), `npm run deploy:preview`: the deploy command for Workers Builds branch builds. Build 5125a872 (wrangler 4.152.0) failed on a re-pushed branch with `A preview with name 'spec-roadmap-audit' already exists. [code: 100338]`; wrangler's source looks the preview up and edits it, but the lookup missed it, and the previews API is unreadable to us (403), so the cause is unconfirmed. On exactly that error the script deletes the named preview (`wrangler preview delete --name <name> -y`) and creates it again once; any other failure passes through. `tests/deploy-preview.spec.ts` drives it with a fake runner (no Cloudflare call). **Not active until the dashboard deploy command is changed (CireSnave, board 280)**, and not proven until one branch is pushed twice.
+
 ## 0.1.20 - 2026-10-24
 
 Docs only; number provisional until the PM confirms at the gate.
