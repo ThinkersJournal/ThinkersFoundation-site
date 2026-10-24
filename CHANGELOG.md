@@ -3,6 +3,13 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.20 - 2026-10-24
+
+Docs only; number provisional until the PM confirms at the gate.
+
+- Spec-to-roadmap audit (PM TASK 2026-10-24). Docs read: 4 (`README.md`, `docs/CLOUDFLARE-PLAN.md`, `docs/VERIFY-FINDINGS.md`, `ops/cloudflare/RUNBOOK.md`). `ROADMAP.md` rows 5 to 13 added; four need a CireSnave call.
+- `README.md` and `ops/cloudflare/RUNBOOK.md` said nothing had been run and blamed a private repo; the redirects were applied 2026-10-23 and the repo is public. Corrected.
+
 ## 0.1.19 - 2026-10-24
 
 CI only; number provisional until the PM confirms at the gate.

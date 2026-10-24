@@ -1,6 +1,6 @@
 # ThinkersFoundation roadmap
 
-The lane's source of work. One row per item; the owner is who must act next. Facts are as of origin/main (0.1.15) on 2026-10-24; re-check before relying on a row. Portfolio-level priorities live in `C:\Projects\PORTFOLIO-ROADMAP.md`.
+The lane's source of work. One row per item; the owner is who must act next. Facts are as of origin/main (0.1.20) on 2026-10-24; rows 5 to 13 come from the spec-to-roadmap audit of README, `docs/` and the RUNBOOK; re-check before relying on a row. Portfolio-level priorities live in `C:\Projects\PORTFOLIO-ROADMAP.md`.
 
 ## Open
 
@@ -10,6 +10,15 @@ The lane's source of work. One row per item; the owner is who must act next. Fac
 | 2 | Brand-domain redirects (decision 251 A, ruled 2026-10-22: "A for now and B when each project becomes ready"): `persistant.io` to the PersistAnt repo, `authant.net` to `authframework.dev` | PM, then CireSnave, then PM, then lane | NOT done. PM read 2026-10-24: the Cloudflare account holds exactly the three foundation zones; these two are not in it. Lane read the same day: public NS for both is still the registrar's `ns1.dyna-ns.net`/`ns2.dyna-ns.net`, apexes resolve to parking `185.53.179.149`, `http://<name>/x?y=1` is `410 Gone`. Order (RUNBOOK 3b): PM `--apply --only brand-zones` (Zone Edit token; prints each zone's nameserver pair) > CireSnave sets those pairs at the registrar > PM `--apply --only redirects-brands` > lane curl-verifies 301 on apex and `www`, path and query dropped. |
 | 3 | authframework.dev site: `ciresnave/authframework-site` PR #1 (`docs/DESIGN.md`) | PM (review) | Site PRs wait on that review: Astro scaffold, four hosted CI jobs, claims test, names in `src/config.ts` (the product is being renamed AuthAnt). |
 | 4 | Brand one-page sites (decision 251 B) | Lane, when the PM says each project is ready | "B when each project becomes ready" (PM reading: PersistAnt 1.0, AuthAnt after the rename). Not started. |
+| 5 | Registrar hygiene on all three foundation domains (plan 1.4): transfer lock, auto-renew, 2FA, registrant email | CireSnave | OPEN, unrecorded: no read-back in the repo. Ask him whether done. |
+| 6 | HSTS (`--only hsts`, opt-in, plan.mjs) | CireSnave | HELD: "the founder's call" (RUNBOOK 2, step 9; `public/_headers`). No record that it ran or was declined. |
+| 7 | Mail test (plan 2.4): send from another mailbox to `admin@` and a made-up name at each domain, keep headers | CireSnave | OPEN, unrecorded. Mail rules are applied (never rerun `email-rules --apply`), but no delivery test is on file. |
+| 8 | `.us` registrant data is public (CLOUDFLARE-PLAN, VERIFY-FINDINGS 6): which contact to publish | CireSnave | OPEN, unrecorded: the choice sits in the private plan, section 0 item 3. Ask him whether it was made. |
+| 9 | Lighthouse check (plan 1.8 says "Lighthouse and axe pass") | Lane | OPEN: axe runs in CI; `git grep -i lighthouse` finds it only in `docs/CLOUDFLARE-PLAN.md`. Add a check or strike the claim. |
+| 10 | Refresh `docs/VERIFY-FINDINGS.md`: row 3 (ACC name reservation fee, COULD-NOT-VERIFY) and row 7 (registrar DS field unchecked, though DNSSEC is now enabled) | Lane | OPEN, low priority. Row 7 can likely be closed from the DNSSEC read-back; row 3 needs an `azcc.gov` read. |
+| 11 | Licence holder line: assign the work to the corporation and use its exact legal name (README, plan item 5.9) | Lane | HELD by incorporation: the entity does not exist yet. |
+| 12 | Google Workspace for Nonprofits (VERIFY-FINDINGS 8) | CireSnave | HELD by IRS 501(c)(3) recognition; not before the IRS letter. Nothing to do now. |
+| 13 | Canonical `/about` answers `307` to `/about/`, so a redirected visitor takes 301, 307, 200 (RUNBOOK 3, step 8) | Lane | OPEN, optional: retarget the rule at the `/about/` form only if the hop ever matters. |
 
 ## Standing rules for this repo
 
@@ -21,6 +30,6 @@ The lane's source of work. One row per item; the owner is who must act next. Fac
 
 ## Done (for orientation)
 
-Site, Workers deploy (board 234), mail and DNSSEC, the three foundation-zone redirects (PM run 2026-10-23; PM re-read 2026-10-24: all three zones `active`, `http://thinkers.foundation/x?y=1` answers 301 to `https://thinkersfoundation.net/x?y=1`, the lane's read-back is in the runbook),
+Plan 1.6 to 1.8 (Workers project, redirects, the site itself; Pages was superseded by Workers, board 234), mail rules and DNSSEC are done and are not rows above. Site, Workers deploy (board 234), mail and DNSSEC, the three foundation-zone redirects (PM run 2026-10-23; PM re-read 2026-10-24: all three zones `active`, `http://thinkers.foundation/x?y=1` answers 301 to `https://thinkersfoundation.net/x?y=1`, the lane's read-back is in the runbook),
 self-hosted runner CI with four required checks, advisory CodeRipper job.
 - Public repo and branch protection (PM, 2026-10-23). Read 2026-10-24: `gh repo view` says `PUBLIC`; `branches/main/protection` requires four checks (Tree-freshness guard, Type check (astro check), Playwright + axe, Build (astro build)), `enforce_admins` false, no required reviews.
