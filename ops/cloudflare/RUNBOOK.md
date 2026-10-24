@@ -149,15 +149,13 @@ read by the `wrangler preview` build (a failure there is a finding).
 
 `persistant.io` -> the PersistAnt repo, `authant.net` -> `authframework.dev`. Option B (one-page sites) comes later.
 
-CireSnave's steps, in order (nothing here is automated; the token must not carry Zone Edit):
+Order (PM 2026-10-24: these two domains were NOT in the Cloudflare account; only the three foundation zones are):
 
-1. Cloudflare dashboard -> Add a domain -> `persistant.io`, then again for `authant.net`; pick the plan he uses for the other zones. If it offers to import existing DNS records, accept.
-2. Cloudflare shows two nameservers per zone (`<name>.ns.cloudflare.com`; the exact pair is shown only after step 1). At each registrar, replace the domain's nameservers with exactly those two. Paste both pairs back.
-3. Wait for each zone to read "Active" (minutes to hours).
+1. PM: `--apply --only brand-zones`. Needs a token with **Zone Edit** (the standing token deliberately lacks it, so this is a one-off token or a temporary grant). It creates both zones if missing and prints the two nameservers Cloudflare assigns to each.
+2. CireSnave: at each registrar, replace the domain's nameservers with exactly the pair printed for it. The pair is per zone; do not reuse one pair for both.
+3. PM: `--apply --only redirects-brands` (the token needs Zone: DNS Write and Single Redirect Write on the two zones). It works while a zone is still `pending`, but nothing is served until step 2 takes effect.
 
-Then, with the same token and env as step 8 (the token needs Zone: DNS Write and Single Redirect Write on the two new zones):
-
-- `node ops/cloudflare/plan.mjs --only redirects-brands` (plan, no network), then `--apply --only redirects-brands` once the PM says so. The step fails loudly if a zone is not visible or not active.
+- `node ops/cloudflare/plan.mjs --only brand-zones,redirects-brands` prints the plan (no network). The redirect step fails loudly if a zone is missing or neither active nor pending.
 - Read-back: `curl -sI https://persistant.io/x?y=1` -> `HTTP/2 301`, `location: https://github.com/ciresnave/PersistAnt`; `curl -sI https://www.authant.net/` -> `301`, `location: https://authframework.dev`. Query and path are deliberately dropped.
 - The A records at 192.0.2.1 are placeholders; nothing is served from them.
 

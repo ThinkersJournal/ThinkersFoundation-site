@@ -35,6 +35,17 @@ test.describe('plan.mjs step selection', () => {
     expect(r.stdout).not.toContain('zone_id:thinkersfoundation');
   });
 
+  test('brand-zones is opt-in, creates exactly the two brand zones and touches no foundation zone (control: default plan omits it)', () => {
+    expect(plan().stdout).not.toContain('== brand-zones:');
+    const r = plan('--only', 'brand-zones');
+    expect(r.status).toBe(0);
+    const posts = r.stdout.split('\n').filter((l) => l.trim().startsWith('POST /zones'));
+    expect(posts).toHaveLength(2);
+    expect(r.stdout).toContain('"name":"persistant.io"');
+    expect(r.stdout).toContain('"name":"authant.net"');
+    expect(r.stdout).not.toContain('<zone_id:thinkers');
+  });
+
   test('dns-preflight is opt-in, read-only, and plans 9 lookups (control: default plan omits it)', () => {
     expect(plan().stdout).not.toContain('== dns-preflight:');
     const r = plan('--only', 'dns-preflight');
