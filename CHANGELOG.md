@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.16 - 2026-10-24
+
+CI only; number provisional until the PM confirms at the gate.
+
+- `.github/workflows/ci-pr.yml`: the advisory `portfolio` job is repinned from `30e012b7` to `d14a22b6` (CodeRipper 0.9.14, PM notice after coderipper#142). Still advisory, not a required check.
+
 ## 0.1.15 - 2026-10-24
 
 CI only; number provisional until the PM confirms at the gate.
