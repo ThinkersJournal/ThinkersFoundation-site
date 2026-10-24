@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.14 - 2026-10-24
+
+Dependency only; number provisional until the PM confirms at the gate.
+
+- `package-lock.json`: zod 4.6.5 -> 4.6.7 (Dependabot #17, lockfile only; redone here so the version and changelog move with it).
+
 ## 0.1.13 - 2026-10-23
 
 CI only; number provisional until the PM confirms at the gate.
