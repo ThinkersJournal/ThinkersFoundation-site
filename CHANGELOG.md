@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.17 - 2026-10-24
+
+Dependency only; number provisional until the PM confirms at the gate.
+
+- `package-lock.json`: undici 8.11.2 -> 8.12.3 and fast-uri 3.1.8 -> 3.1.9 (Dependabot #23 and #24, lockfile only; redone here so the version and changelog move with them).
+
 ## 0.1.16 - 2026-10-24
 
 CI only; number provisional until the PM confirms at the gate.
