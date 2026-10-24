@@ -26,7 +26,7 @@ const ZONES = ['thinkersfoundation.net', 'thinkersfoundation.us', 'thinkers.foun
 const ROLES = ['admin', 'info', 'filings', 'security', 'abuse', 'postmaster', 'dmca', 'treasurer'];
 // Decision 251 (CireSnave 2026-10-22): "A for now and B when each project becomes ready." A = the
 // brand domain redirects to the project's home. Opt-in step `redirects-brands`; the zones must already
-// be active in Cloudflare (added by CireSnave, nameservers set at the registrar).
+// exist in the account: `brand-zones` creates them (PM, needs a token with Zone Edit); the registrar nameserver change is CireSnave's.
 const BRANDS = [
   { zone: 'persistant.io', target: 'https://github.com/ciresnave/PersistAnt' },
   { zone: 'authant.net', target: 'https://authframework.dev' },
@@ -226,9 +226,31 @@ const STEPS = [
     },
   },
   {
+    id: 'brand-zones',
+    optIn: true,
+    plan: 'OPT-IN, decision 251 A: create the zones persistant.io and authant.net in the account if missing (needs Zone Edit on the token) and PRINT the two nameservers Cloudflare assigns each; CireSnave then sets exactly those at the registrar. An existing zone is left alone. Runs only with --only brand-zones',
+    async run() {
+      for (const { zone } of BRANDS) {
+        const found = await call('GET', `/zones?name=${zone}&account.id=${ACCOUNT}`);
+        let hit = apply ? found.result[0] : undefined;
+        if (hit) console.log(`    exists: ${zone} (${hit.status}), left alone`);
+        else {
+          const made = await call('POST', '/zones', { name: zone, account: { id: ACCOUNT }, type: 'full' });
+          if (apply) hit = made.result;
+        }
+        const back = await call('GET', `/zones?name=${zone}&account.id=${ACCOUNT}`);
+        if (apply) {
+          const z = back.result[0];
+          if (!z) throw new Error(`zone ${zone} not visible after creation`);
+          console.log(`    ${zone}: status=${z.status}; set these nameservers at the registrar: ${(z.name_servers ?? []).join(', ')}`);
+        }
+      }
+    },
+  },
+  {
     id: 'redirects-brands',
     optIn: true,
-    plan: 'OPT-IN, decision 251 A: persistant.io and authant.net (apex and www) 301 to the project home, path and query NOT carried. Adds a proxied placeholder A record on the apex and www (a redirect only fires on a proxied name) unless an A record already exists. Zones must already be active. Runs only with --only redirects-brands',
+    plan: 'OPT-IN, decision 251 A: persistant.io and authant.net (apex and www) 301 to the project home, path and query NOT carried. Adds a proxied placeholder A record on the apex and www (a redirect only fires on a proxied name) unless an A record already exists. Zones must exist (`brand-zones`); pending is accepted. Runs only with --only redirects-brands',
     async run() {
       for (const { zone, target } of BRANDS) {
         zoneId[zone] = `<zone_id:${zone}>`;
@@ -236,7 +258,8 @@ const STEPS = [
         if (apply) {
           const hit = r.result[0];
           if (!hit) throw new Error(`zone ${zone} not visible to this token (CireSnave adds it first)`);
-          if (hit.status !== 'active') throw new Error(`zone ${zone} is ${hit.status}, not active (nameservers not yet set at the registrar)`);
+          if (!['active', 'pending'].includes(hit.status)) throw new Error(`zone ${zone} is ${hit.status}; expected active or pending`);
+          if (hit.status === 'pending') console.log(`    ${zone} is pending: the rule is stored but nothing reaches it until the registrar nameservers are set`);
           zoneId[zone] = hit.id;
         }
         for (const name of [zone, `www.${zone}`]) {

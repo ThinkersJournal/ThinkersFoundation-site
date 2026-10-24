@@ -7,6 +7,8 @@ breaking-change number.
 
 Docs only; number provisional until the PM confirms at the gate.
 
+- `ops/cloudflare/plan.mjs`: new opt-in step `brand-zones` creates `persistant.io` and `authant.net` in the account if missing (needs a Zone Edit token; PM runs it) and prints the nameserver pair Cloudflare assigns each; `redirects-brands` now accepts a `pending` zone. PM finding 2026-10-24: these two domains were never in the account, so decision 251 A was not done. Plan mode only; unrun against the live API. `tests/plan-steps.spec.ts` pins it.
+- `ops/cloudflare/RUNBOOK.md` 3b: the order is now PM `brand-zones`, CireSnave registrar nameservers, PM `redirects-brands`.
 - `ROADMAP.md` (new): the lane's source of work, one row per open item with its owner and next step (PM request 2026-10-24).
 
 ## 0.1.15 - 2026-10-24
