@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.16 - 2026-10-24
+
+Docs only; number provisional until the PM confirms at the gate.
+
+- `ROADMAP.md` (new): the lane's source of work, one row per open item with its owner and next step (PM request 2026-10-24).
+
 ## 0.1.15 - 2026-10-24
 
 CI only; number provisional until the PM confirms at the gate.
