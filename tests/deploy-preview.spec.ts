@@ -1,5 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { resolve } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 // scripts/deploy-preview.mjs is the deploy command for Workers Builds branch builds. These tests drive it
@@ -78,5 +81,47 @@ test.describe('deploy-preview.mjs', () => {
     expect(r.code).toBe(1);
     expect(r.calls).toEqual([['preview']]);
     expect(r.logs.join('\n')).toContain('not guessing');
+  });
+});
+
+// The script drives a real, logged-in wrangler. These run it with PATH pointing at an empty directory, so
+// even a bug cannot reach wrangler: anything that tries to spawn `npx` fails with a non-zero exit.
+test.describe('deploy-preview.mjs never deploys on --help, a typo, or import', () => {
+  const emptyBin = mkdtempSync(join(tmpdir(), 'no-npx-'));
+  const run = (args: string[]) =>
+    spawnSync(process.execPath, [resolve('scripts/deploy-preview.mjs'), ...args], {
+      encoding: 'utf8',
+      env: { ...process.env, PATH: emptyBin, Path: emptyBin },
+    });
+
+  test('control: with that PATH, a real spawn of npx fails', async () => {
+    const { npxRunner } = await import(SCRIPT);
+    const saved = { PATH: process.env.PATH, Path: process.env.Path };
+    process.env.PATH = emptyBin;
+    process.env.Path = emptyBin;
+    try {
+      expect(npxRunner(['--version']).status).not.toBe(0);
+    } finally {
+      if (saved.PATH !== undefined) process.env.PATH = saved.PATH;
+      if (saved.Path !== undefined) process.env.Path = saved.Path;
+    }
+  });
+
+  test('--help prints usage and exits 0 without spawning', () => {
+    const r = run(['--help']);
+    expect(r.status, r.stderr).toBe(0);
+    expect(r.stdout).toContain('usage: npm run deploy:preview');
+  });
+
+  test('an unknown argument exits 2 without spawning', () => {
+    const r = run(['--hlep']);
+    expect(r.status).toBe(2);
+    expect(r.stderr).toContain('unknown argument');
+  });
+
+  test('importing the module runs nothing', async () => {
+    const m = await import(SCRIPT);
+    expect(typeof m.deployPreview).toBe('function');
+    expect(m.parseArgs([])).toEqual({ action: 'deploy' });
   });
 });

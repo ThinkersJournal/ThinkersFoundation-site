@@ -49,6 +49,23 @@ export function deployPreview(run, log = console.log) {
   return run(['preview']).status;
 }
 
+// Arguments are checked BEFORE anything is spawned: this runs a real, logged-in wrangler, so `--help`
+// (or a typo) must never start a deploy.
+export function parseArgs(argv) {
+  if (argv.length === 0) return { action: 'deploy' };
+  if (argv.every((a) => a === '--help' || a === '-h')) return { action: 'help' };
+  return { action: 'error', message: `unknown argument(s): ${argv.join(' ')}` };
+}
+
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
+  const parsed = parseArgs(process.argv.slice(2));
+  if (parsed.action === 'help') {
+    console.log('usage: npm run deploy:preview   (no arguments; runs `wrangler preview`, retrying once on error 100338)');
+    process.exit(0);
+  }
+  if (parsed.action === 'error') {
+    console.error(`deploy-preview: ${parsed.message}`);
+    process.exit(2);
+  }
   process.exit(deployPreview(npxRunner));
 }
