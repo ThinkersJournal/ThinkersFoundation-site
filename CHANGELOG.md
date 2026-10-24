@@ -3,13 +3,25 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
-## 0.1.16 - 2026-10-24
+## 0.1.18 - 2026-10-24
 
 Docs only; number provisional until the PM confirms at the gate.
 
 - `ops/cloudflare/plan.mjs`: new opt-in step `brand-zones` creates `persistant.io` and `authant.net` in the account if missing (needs a Zone Edit token; PM runs it) and prints the nameserver pair Cloudflare assigns each; `redirects-brands` now accepts a `pending` zone. PM finding 2026-10-24: these two domains were never in the account, so decision 251 A was not done. Plan mode only; unrun against the live API. `tests/plan-steps.spec.ts` pins it.
 - `ops/cloudflare/RUNBOOK.md` 3b: the order is now PM `brand-zones`, CireSnave registrar nameservers, PM `redirects-brands`.
 - `ROADMAP.md` (new): the lane's source of work, one row per open item with its owner and next step (PM request 2026-10-24).
+
+## 0.1.17 - 2026-10-24
+
+Dependency only; number provisional until the PM confirms at the gate.
+
+- `package-lock.json`: undici 8.11.2 -> 8.12.3 and fast-uri 3.1.8 -> 3.1.9 (Dependabot #23 and #24, lockfile only; redone here so the version and changelog move with them).
+
+## 0.1.16 - 2026-10-24
+
+CI only; number provisional until the PM confirms at the gate.
+
+- `.github/workflows/ci-pr.yml`: the advisory `portfolio` job is repinned from `30e012b7` to `d14a22b6` (CodeRipper 0.9.14, PM notice after coderipper#142). Still advisory, not a required check.
 
 ## 0.1.15 - 2026-10-24
 
