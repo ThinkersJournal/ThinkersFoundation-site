@@ -39,8 +39,7 @@ test.describe('plan.mjs step selection', () => {
     expect(plan().stdout).not.toContain('== brand-zones:');
     const r = plan('--only', 'brand-zones');
     expect(r.status).toBe(0);
-    const posts = r.stdout.split('
-').filter((l) => l.trim().startsWith('POST /zones'));
+    const posts = r.stdout.split('\n').filter((l) => l.trim().startsWith('POST /zones'));
     expect(posts).toHaveLength(2);
     expect(r.stdout).toContain('"name":"persistant.io"');
     expect(r.stdout).toContain('"name":"authant.net"');
