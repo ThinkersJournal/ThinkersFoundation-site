@@ -19,6 +19,7 @@ The lane's source of work. One row per item; the owner is who must act next. Fac
 | 11 | Licence holder line: assign the work to the corporation and use its exact legal name (README, plan item 5.9) | Lane | HELD by incorporation: the entity does not exist yet. |
 | 12 | Google Workspace for Nonprofits (VERIFY-FINDINGS 8) | CireSnave | HELD by IRS 501(c)(3) recognition; not before the IRS letter. Nothing to do now. |
 | 13 | Canonical `/about` answers `307` to `/about/`, so a redirected visitor takes 301, 307, 200 (RUNBOOK 3, step 8) | Lane | OPEN, optional: retarget the rule at the `/about/` form only if the hop ever matters. |
+| 14 | `wrangler preview` error 100338 on Workers Builds: seen once, not reproduced | Lane (watch) | Build 5125a872 (2026-10-24, wrangler 4.152.0, PR #27) deploy command `npx wrangler preview` failed after ~2 s: `A request to the Cloudflare API (/accounts/<acct>/workers/workers/thinkersfoundation-site/previews) failed. A preview with name 'spec-roadmap-audit' already exists. [code: 100338]`, no line between the beta warning and the error. NOT reproduced by re-push: PR #28 was pushed twice and both builds passed. Suspected, unverified: two builds racing on one branch name. wrangler 4.141.0 and 4.152.0 both look the preview up and edit it when found (source read); the previews API is 403 to our tokens. If it recurs: script drafted in branch `deploy-preview-retry` (c633a36, delete-and-recreate once, 10 tests; PR #28 closed unmerged). No dashboard change wanted. |
 
 ## Standing rules for this repo
 
