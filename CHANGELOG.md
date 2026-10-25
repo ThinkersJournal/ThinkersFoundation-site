@@ -7,7 +7,7 @@ breaking-change number.
 
 Docs only; number provisional until the PM confirms at the gate.
 
-- `docs/PATENT-SWEEP.md`: retroactive patent sweep (PM board 286). Three candidate ideas, no overlap found, but claim text was not read for any hit; recorded as such.
+- `docs/PATENT-SWEEP.md`: retroactive patent sweep (PM board 286). Three candidate ideas; four hits, claims read, all clear.
 
 ## 0.1.25 - 2026-10-25
 
