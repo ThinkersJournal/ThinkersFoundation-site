@@ -23,7 +23,7 @@ scoped API token in the vault (never in a repo, never in a chat).
 | 1.5 | Create an API token, scoped narrowly to these three zones and this account, with the permission list in `ThinkersFoundation-site/ops/cloudflare/RUNBOOK.md` section 1 (my short list here was incomplete: it also needs DNSSEC, Single Redirect, Zone Settings and the account-level Email Routing Addresses permission) and store it in the vault as entry `CLOUDFLARE_THINKERSFOUNDATION_API_TOKEN` with `--env CLOUDFLARE_API_TOKEN` (never a generic `CLOUDFLARE_API_TOKEN` entry) | you | agent runs `wrangler whoami` and lists the three zones |
 | 1.6 | Create the Pages project `thinkersfoundation-site` (static, from a git repo, see 1.8) and attach custom domains: the canonical one plus the two others | agent | all three hostnames resolve to the site (HTTPS, valid certs) |
 | 1.7 | Redirect Rules: the two non-canonical hostnames 301 to the canonical one, preserving path. Redirect `www` to the apex | agent | `curl -sI` on each shows 301 and the canonical Location |
-| 1.8 | The site itself: a small static page set built like ThinkersJournal.com (Astro on Pages, same lint and CI gates): one page, plus About, Contact, Privacy | agent | CI green; page loads; Lighthouse and axe pass |
+| 1.8 | The site itself: a small static page set built like ThinkersJournal.com (Astro on Pages, same lint and CI gates): one page, plus About, Contact, Privacy | agent | CI green; page loads; axe passes (`tests/a11y.spec.ts`; no Lighthouse check, struck 2026-10-25 on the PM's call) |
 
 **Why 1.2 and 1.3 look contradictory but are not (CireSnave hit this, 2026-10-16).** DNSSEC has to be OFF at the
 registrar when the nameservers change, and ON again only once Cloudflare is serving the zone. Both statements are on

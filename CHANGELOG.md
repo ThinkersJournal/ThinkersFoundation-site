@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.24 - 2026-10-25
+
+Docs only; number provisional until the PM confirms at the gate.
+
+- `docs/CLOUDFLARE-PLAN.md` 1.8: struck "Lighthouse and axe pass" down to "axe passes"; nothing in the repo ran Lighthouse (PM ruling on ROADMAP row 9). `ROADMAP.md` row 9 marked done.
+
 ## 0.1.23 - 2026-10-25
 
 Docs only; number provisional until the PM confirms at the gate.
