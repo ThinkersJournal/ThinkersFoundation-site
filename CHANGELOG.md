@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.23 - 2026-10-25
+
+Docs only; number provisional until the PM confirms at the gate.
+
+- `docs/VERIFY-FINDINGS.md` row 7 closed (DS present with AD=true for all three domains, DoH read, `com.` control); row 3: the 120-day non-renewable duration is now statute (ARS 10-3402(A)), the fee stays unverified. `ROADMAP.md` row 10 updated to match.
+
 ## 0.1.22 - 2026-10-25
 
 Docs only; number provisional until the PM confirms at the gate.
