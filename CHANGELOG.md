@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.21 - 2026-10-24
+
+Docs only; number provisional until the PM confirms at the gate.
+
+- `ROADMAP.md` row 14: `wrangler preview` error 100338 seen once on Workers Builds (build 5125a872), not reproduced by re-push; the drafted workaround stays in branch `deploy-preview-retry` (PR #28 closed unmerged).
+
 ## 0.1.20 - 2026-10-24
 
 Docs only; number provisional until the PM confirms at the gate.
