@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.26 - 2026-10-25
+
+Docs only; number provisional until the PM confirms at the gate.
+
+- `docs/PATENT-SWEEP.md`: retroactive patent sweep (PM board 286). Three candidate ideas, no overlap found, but claim text was not read for any hit; recorded as such.
+
 ## 0.1.25 - 2026-10-25
 
 Docs only; number provisional until the PM confirms at the gate.
