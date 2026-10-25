@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.22 - 2026-10-25
+
+Docs only; number provisional until the PM confirms at the gate.
+
+- `ROADMAP.md` row 14 links the upstream report, cloudflare/workers-sdk#16464.
+
 ## 0.1.21 - 2026-10-24
 
 Docs only; number provisional until the PM confirms at the gate.
