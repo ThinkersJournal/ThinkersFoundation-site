@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.25 - 2026-10-25
+
+Docs only; number provisional until the PM confirms at the gate.
+
+- `ROADMAP.md` row 13 closed as won't-do (PM ruling): the 301, 307, 200 chain is harmless and the fix would replace each zone's whole redirect ruleset.
+
 ## 0.1.24 - 2026-10-25
 
 Docs only; number provisional until the PM confirms at the gate.
