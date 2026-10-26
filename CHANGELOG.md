@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.27 - 2026-10-26
+
+CI only; number provisional until the PM confirms at the gate.
+
+- `ci-pr.yml`: advisory CodeRipper `portfolio` job repinned from ee9c3950 (0.9.24) to 83585ae (coderipper main after #174, installs 0.10.0), which adds SEC-009 and patent-sweep-record. `docs/PATENT-SWEEP.md` already names line 0.1, has the ideas/queries/hits headings and no `unread` row, so the new rule is read against a record that satisfies it.
+
 ## 0.1.26 - 2026-10-25
 
 Docs only; number provisional until the PM confirms at the gate.
