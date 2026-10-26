@@ -154,6 +154,6 @@ jobs:
     if: github.event.pull_request.head.repo.full_name == github.repository
     permissions:
       contents: read
-    uses: ciresnave/coderipper/.github/workflows/portfolio.yml@ee9c3950c510fae136d316fed3bd9ecda343cede # 0.9.24
+    uses: ciresnave/coderipper/.github/workflows/portfolio.yml@83585ae3e7ff321031d7497bb9eda81a90f4765f # 0.10.0
     with:
       runs-on: self-hosted
