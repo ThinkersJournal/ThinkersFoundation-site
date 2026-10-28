@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.28 - 2026-10-28
+
+Docs only; number provisional until the PM confirms at the gate.
+
+- `ROADMAP.md` row 6: HSTS ruled yes 2026-10-28 (not yet run). Row 5: registrar hygiene ruled done 2026-10-28.
+
 ## 0.1.27 - 2026-10-26
 
 CI only; number provisional until the PM confirms at the gate.
