@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.29 - 2026-10-28
+
+Docs only; number provisional until the PM confirms at the gate.
+
+- `ROADMAP.md` row 6: HSTS applied by the PM, `max-age=31536000` read back on all three names. Row 7: mail test DONE (six separate messages sent and received; header auth results not reported). Row 8: `.us` public contact ruled done (home contact, as registered; no personal details recorded).
+
 ## 0.1.28 - 2026-10-28
 
 Docs only; number provisional until the PM confirms at the gate.
