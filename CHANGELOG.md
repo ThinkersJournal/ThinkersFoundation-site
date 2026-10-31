@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.30 - 2026-10-31
+
+Docs only; number provisional until the PM confirms at the gate.
+
+- `docs/VERIFY-FINDINGS.md` row 3 and `ROADMAP.md` row 10 closed: the ACC name-reservation fee is read from the ACC's own form instructions (C006i) and fee schedule: $10, +$35 expedited, optional, 120 days.
+
 ## 0.1.29 - 2026-10-28
 
 Docs only; number provisional until the PM confirms at the gate.
