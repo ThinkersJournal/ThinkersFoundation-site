@@ -16,14 +16,10 @@ name: CI
 # step would be green on every PR whatever the guard's code said. What CI can check is
 # that the guard still makes the right decision, and its own spec does that.
 #
-# RUNNER (pull requests). Hosted Actions on this private repo die in 2 s on an account billing
-# failure, so every job runs on the self-hosted Windows runner (EXPECTATIONS 5.1h, "Private
-# repos"; agentlife docs/RUNNER-SETUP.md 2b/8a). This file is pull_request ONLY and every job
-# carries the same-repo `if:`, as the lint requires; push/dispatch live in ci-main.yml with
-# the same jobs and no `if:`. Keep the two files' jobs identical apart from that line.
-# A private repo takes no fork PRs and its fork-workflow setting stays off; the `if:` keeps
-# it that way if that ever changes. No environment gate (Free plan). No secrets.
-# Not measured: nothing here has run on `gh-runner` yet (no runner is registered).
+# RUNNER (pull requests). Every job runs on GitHub-hosted ubuntu-latest (CireSnave 2026-10-22: prefer hosted
+# runners for public repos wherever a job needs no GPU; no job here needs Windows). This repo is public and
+# no self-hosted runner is registered for it. No secrets in any job; the same-repo `if:` on the pull_request
+# jobs keeps fork code off the workflow. Keep ci-pr.yml and ci-main.yml jobs identical apart from that line.
 #
 # Cloudflare Pages deploys on its own. A deploy status is not a gate, so nothing here
 # deploys and none of these jobs depend on it.
@@ -41,7 +37,7 @@ concurrency:
 jobs:
   freshness:
     name: Tree-freshness guard
-    runs-on: [self-hosted, windows]
+    runs-on: ubuntu-latest
     if: github.event.pull_request.head.repo.full_name == github.repository
     timeout-minutes: 10
     steps:
@@ -65,7 +61,7 @@ jobs:
 
   check:
     name: Type check (astro check)
-    runs-on: [self-hosted, windows]
+    runs-on: ubuntu-latest
     if: github.event.pull_request.head.repo.full_name == github.repository
     timeout-minutes: 10
     steps:
@@ -86,7 +82,7 @@ jobs:
 
   build:
     name: Build (astro build)
-    runs-on: [self-hosted, windows]
+    runs-on: ubuntu-latest
     if: github.event.pull_request.head.repo.full_name == github.repository
     timeout-minutes: 10
     steps:
@@ -107,7 +103,7 @@ jobs:
 
   test:
     name: Playwright + axe
-    runs-on: [self-hosted, windows]
+    runs-on: ubuntu-latest
     if: github.event.pull_request.head.repo.full_name == github.repository
     timeout-minutes: 20
     steps:
@@ -123,11 +119,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Chromium lands in the runner account's Playwright cache and is reused across jobs;
-      # the install is a no-op when the pinned version is already there. No --with-deps:
-      # that flag installs Linux OS packages and this runner is Windows.
+      # Hosted Linux runners start without Chromium's OS libraries, so --with-deps installs them.
       - name: Install Chromium
-        run: npx playwright install chromium
+        run: npx playwright install --with-deps chromium
 
       # `npx playwright test`, not `npm test`: the pretest hook runs the freshness guard,
       # which is "NOT VERIFIED" on a detached CI checkout (see the header). Job 1 covers
@@ -147,13 +141,11 @@ jobs:
 
   # ADVISORY, not a required check (CireSnave 2026-10-23: "Roll out advisory-only, non-blocking
   # CodeRipper checks everywhere."). Pull requests only, so it has no twin in ci-main.yml. The
-  # reusable workflow is pinned to a commit of ciresnave/coderipper (public); `runs-on` is the
-  # self-hosted label because this repo is private. Do not add it to branch protection.
+  # reusable workflow is pinned to a commit of ciresnave/coderipper (public); it runs on the
+  # reusable workflow's default, ubuntu-latest (this repo is public). Do not add it to branch protection.
   portfolio:
     name: Portfolio checks (advisory)
     if: github.event.pull_request.head.repo.full_name == github.repository
     permissions:
       contents: read
-    uses: ciresnave/coderipper/.github/workflows/portfolio.yml@83585ae3e7ff321031d7497bb9eda81a90f4765f # 0.10.0
-    with:
-      runs-on: self-hosted
+    uses: ciresnave/coderipper/.github/workflows/portfolio.yml@c72a6e03479d914de8ea8a73609ba73e93a0de92 # 0.47.5

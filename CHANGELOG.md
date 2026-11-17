@@ -3,6 +3,13 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.31 - 2026-11-16
+
+CI only; number provisional until the PM stamps it at the gate (no version files touched).
+
+- `.github/workflows/ci-pr.yml`: the advisory CodeRipper `portfolio` job moves to the shared workflow at coderipper c72a6e0 (0.47.5). No `.coderipper.toml` or rule-name references here, so the rule-id migration changed nothing.
+- `ci-pr.yml` and `ci-main.yml`: every job moves from `[self-hosted, windows]` to GitHub-hosted `ubuntu-latest` (no runner is registered for this public repo, so jobs queued until GitHub cancelled them at 24 h); Playwright installs Chromium with `--with-deps`; the portfolio job drops its self-hosted `runs-on` and takes the reusable workflow's `ubuntu-latest` default. README line updated. PM task site-ci-to-hosted-runners.
+
 ## 0.1.30 - 2026-10-31
 
 Docs only; number provisional until the PM confirms at the gate.
