@@ -37,7 +37,7 @@ npm test          # freshness guard, then Playwright + axe against the built sit
 Four required checks, one job each, named as in ThinkersJournal.com so branch protection can require them by name:
 `Tree-freshness guard`, `Type check (astro check)`, `Build (astro build)`, `Playwright + axe`.
 
-The jobs run on the self-hosted Windows runner, because hosted Actions fail on the account's billing (the repo was private then; it is public now).
+The jobs run on GitHub-hosted `ubuntu-latest` (the repo is public; no self-hosted runner is registered for it).
 They run on push to `main`, manual dispatch, and pull requests from this repo only (never a fork). See the header of
 `.github/workflows/ci-pr.yml` (pull requests) and `ci-main.yml` (push, dispatch); keep their jobs identical.
 
