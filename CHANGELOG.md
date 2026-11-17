@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.33 - 2026-11-17
+
+Dependency bump (Dependabot #39); number provisional until the PM confirms at the gate.
+
+- `astro` 7.3.8 to 7.4.7 (`package.json`, `package-lock.json`); type check, build, Playwright + axe all green on the PR head.
+
 ## 0.1.32 - 2026-11-16
 
 Docs only; number provisional until the PM confirms at the gate (0.1.31 is the merged pin-move/hosted-runner PR #40).
