@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.32 - 2026-11-16
+
+Docs only; number provisional until the PM confirms at the gate (0.1.31 is the merged pin-move/hosted-runner PR #40).
+
+- `ROADMAP.md` restated: header matches origin/main 4b73467 (0.1.31), every DONE row names its command or test, every open row its blocker, stale row 3 (authframework-site) corrected, and an `APP.live` section names the ThinkersJournal.com flag, its value and the test that follows it (pm-web task).
+
 ## 0.1.31 - 2026-11-16
 
 CI only; number provisional until the PM stamps it at the gate (no version files touched).
