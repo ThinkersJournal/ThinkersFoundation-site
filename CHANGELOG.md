@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.34 - 2026-11-21
+
+Docs only; number provisional until pm-assist confirms at the gate.
+
+- `ROADMAP.md`: the stale "In flight" line (#40 waiting on the self-hosted runner) now says nothing is in flight; #40 and #41 are merged and CI is GitHub-hosted since 0.1.31. Header ref moved to ab59238 (0.1.33).
+
 ## 0.1.33 - 2026-11-17
 
 Dependency bump (Dependabot #39); number provisional until the PM confirms at the gate.

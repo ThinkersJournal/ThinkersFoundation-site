@@ -1,6 +1,6 @@
 # ThinkersFoundation roadmap
 
-The lane's source of work. One row per item; the owner is who must act next. Facts are as of origin/main 4b73467 (0.1.31, merged 2026-11-17), re-read 2026-11-17: each DONE row names the command or test that shows it, each open row names its blocker; rows 5 to 13 come from the spec-to-roadmap audit of README, `docs/` and the RUNBOOK. Rows marked "ruling" rest on a CireSnave statement, not a read-back in this repo. Re-check before relying on a row. Portfolio-level priorities live in `C:\Projects\PORTFOLIO-ROADMAP.md`.
+The lane's source of work. One row per item; the owner is who must act next. Facts are as of origin/main ab59238 (0.1.33, merged 2026-11-17), re-read 2026-11-21: each DONE row names the command or test that shows it, each open row names its blocker; rows 5 to 13 come from the spec-to-roadmap audit of README, `docs/` and the RUNBOOK. Rows marked "ruling" rest on a CireSnave statement, not a read-back in this repo. Re-check before relying on a row. Portfolio-level priorities live in `C:\Projects\PORTFOLIO-ROADMAP.md`.
 
 ## Open
 
@@ -21,7 +21,7 @@ The lane's source of work. One row per item; the owner is who must act next. Fac
 | 13 | Canonical `/about` answers `307` to `/about/`, so a redirected visitor takes 301, 307, 200 (RUNBOOK 3, step 8) | Lane | CLOSED, WON'T DO (PM ruling 2026-10-25): the extra hop costs a few milliseconds on rarely hit non-canonical hostnames, and fixing it means a PM `--apply --only redirects`, which replaces each zone's whole redirect ruleset; not worth that risk. Reopen only if the hop is shown to matter. |
 | 14 | `wrangler preview` error 100338 on Workers Builds: seen once, not reproduced | Lane (watch) | Blocker: a recurrence (nothing to do until then); retrigger, do not debug (one later Workers Build failure on #37 passed on an empty-commit retrigger).  Build 5125a872 (2026-10-24, wrangler 4.152.0, PR #27) deploy command `npx wrangler preview` failed after ~2 s: `A request to the Cloudflare API (/accounts/<acct>/workers/workers/thinkersfoundation-site/previews) failed. A preview with name 'spec-roadmap-audit' already exists. [code: 100338]`, no line between the beta warning and the error. NOT reproduced by re-push: PR #28 was pushed twice and both builds passed. Suspected, unverified: two builds racing on one branch name. wrangler 4.141.0 and 4.152.0 both look the preview up and edit it when found (source read); the previews API is 403 to our tokens. If it recurs: script drafted in branch `deploy-preview-retry` (c633a36, delete-and-recreate once, 10 tests; PR #28 closed unmerged). No dashboard change wanted. Reported upstream (CireSnave OK'd 2026-10-25, filed by the PM): <https://github.com/cloudflare/workers-sdk/issues/16464>. |
 
-In flight (not a roadmap row): PRs moving the CodeRipper pin to 0.47.5 (ThinkersFoundation-site#40, version 0.1.31 provisional, waits on the self-hosted runner and the PM's merge).
+In flight: nothing. The CodeRipper pin move to 0.47.5 (ThinkersFoundation-site#40, 0.1.31) and the ROADMAP restatement (#41, 0.1.32) are merged; CI has run on GitHub-hosted runners since 0.1.31.
 
 ## APP.live (not this repo's flag)
 
