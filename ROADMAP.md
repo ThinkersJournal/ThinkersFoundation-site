@@ -1,6 +1,6 @@
 # ThinkersFoundation roadmap
 
-The lane's source of work. One row per item; the owner is who must act next. Facts are as of origin/main ab59238 (0.1.33, merged 2026-11-17), re-read 2026-11-21: each DONE row names the command or test that shows it, each open row names its blocker; rows 5 to 13 come from the spec-to-roadmap audit of README, `docs/` and the RUNBOOK. Rows marked "ruling" rest on a CireSnave statement, not a read-back in this repo. Re-check before relying on a row. Portfolio-level priorities live in `C:\Projects\PORTFOLIO-ROADMAP.md`.
+The lane's source of work. One row per item; the owner is who must act next. Facts are as of origin/main 7c1d299 (0.1.34, merged 2026-11-21), re-read 2026-11-24: each DONE row names the command or test that shows it, each open row names its blocker; rows 5 to 13 come from the spec-to-roadmap audit of README, `docs/` and the RUNBOOK. Rows marked "ruling" rest on a CireSnave statement, not a read-back in this repo. Re-check before relying on a row. Portfolio-level priorities live in `C:\Projects\PORTFOLIO-ROADMAP.md`.
 
 ## Open
 
