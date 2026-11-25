@@ -3,6 +3,12 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.36 - 2026-11-25
+
+CI pin; number provisional until pm-assist confirms at the gate.
+
+- `ci-pr.yml`: portfolio CodeRipper job pinned to ciresnave/coderipper `467fd259` (installs coderipper 0.48.1), was `56b8982c` (0.48.0). Per pm-web [TASK].
+
 ## 0.1.35 - 2026-11-24
 
 CI pin and docs; number provisional until pm-assist confirms at the gate.
