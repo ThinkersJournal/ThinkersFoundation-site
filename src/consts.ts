@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 export const SITE = {
   name: "Thinker's Foundation",
   title: "Thinker's Foundation",

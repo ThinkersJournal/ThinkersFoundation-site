@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 

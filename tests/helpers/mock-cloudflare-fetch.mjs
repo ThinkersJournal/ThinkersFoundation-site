@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Preloaded with `node --import` so ops/cloudflare/plan.mjs can be run with --apply
 // against a stand-in for the Cloudflare API. plan.mjs itself is not modified and never
 // sees a real token. Zone statuses come from MOCK_ZONE_STATUS, a JSON object of
