@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The Cloudflare half of PRE-FILING-PLAN.md sections 1 and 2, as a script.
 //
 //   node ops/cloudflare/plan.mjs                 # PLAN mode (default): prints every call, makes NONE

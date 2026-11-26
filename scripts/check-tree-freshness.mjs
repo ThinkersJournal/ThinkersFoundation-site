@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Fails when the working tree is misrepresenting the mainline — i.e. when every file you
 // read from it is quietly out of date while every ref check still looks green.
 //
