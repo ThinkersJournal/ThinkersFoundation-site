@@ -3,6 +3,10 @@
 Versions follow the portfolio rule: every pushed change bumps the version; pre-1.0 the second number is the
 breaking-change number.
 
+## 0.1.37 - 2026-11-26
+
+SPDX-License-Identifier header (`MIT OR Apache-2.0`) added to the 14 tracked .ts/.mjs sources; ROADMAP row 15. No behaviour change; not breaking. Allocated by pm-assist.
+
 ## 0.1.36 - 2026-11-25
 
 CI pin; number provisional until pm-assist confirms at the gate.
